@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+import "google/api/field_behavior.proto";
+import "google/protobuf/wrappers.proto";
+
+message Test1 {
+  string scalar = 1 [ (google.api.field_behavior) = OPTIONAL ];
+  google.protobuf.StringValue nonScalar = 2 [ (google.api.field_behavior) = REQUIRED ];
+}
