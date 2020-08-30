@@ -1,7 +1,6 @@
 type TypeA {
-  field: Int
+  field: Int!
 }
-
 type TypeB {
-  field: [TypeA]
+  field: [TypeA!]
 }

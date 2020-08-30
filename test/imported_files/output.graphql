@@ -2,11 +2,9 @@ type DirectType {
   fieldA: ImportTypeA
   fieldB: ImportTypeB
 }
-
 type ImportTypeA {
-  fieldA: String
+  fieldA: String!
 }
-
 type ImportTypeB {
-  fieldA: String
+  fieldA: String!
 }

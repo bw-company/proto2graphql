@@ -1,11 +1,9 @@
 type TypeA {
   fieldA: TypeA_TypeB
 }
-
 type TypeA_TypeB {
-  fieldB: Int
+  fieldB: Int!
 }
-
 type TypeC {
   fieldC: TypeA
 }
