@@ -6,27 +6,32 @@ type TypeA {
   attributes: [String_Attribute_map]
   fieldA: TypeA_TypeB
 }
+input TypeAInput {
+  scalar: String
+  enumValue: EnumA!
+  nonScalar: google_protobuf_StringValueInput!
+  either: TypeA_eitherInput
+  attributes: [String_Attribute_map]
+  fieldA: TypeA_TypeBInput
+}
 union TypeA_either = google_protobuf_Int32Value | google_protobuf_StringValue!
+input TypeA_eitherInput {
+  int32Value: google_protobuf_Int32ValueInput
+  stringValue: google_protobuf_StringValueInput
+}
 type String_Attribute_map {
   key: String!
   value: Attribute
+}
+input String_Attribute_mapInput {
+  key: String!
+  value: AttributeInput
 }
 type TypeA_TypeB {
   fieldB: Int!
 }
 input TypeA_TypeBInput {
   fieldB: Int!
-}
-input TypeAInput {
-  scalar: String
-  enumValue: EnumA!
-  nonScalar: google_protobuf_StringValueInput!
-  attributes: [String_Attribute_map]
-  fieldA: TypeA_TypeBInput
-}
-input String_Attribute_mapInput {
-  key: String!
-  value: AttributeInput
 }
 enum EnumA {
   ENUM_A_UNSPECIFIED
