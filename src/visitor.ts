@@ -50,7 +50,7 @@ function visitMessage(message: protobuf.Type, context: Context): GraphQLNamedTyp
   result.push(
     objectType,
     ...visitOneOfs(message, context),
-    ...visitMaps(message, context),
+    ...visitOutputMaps(message, context),
     ...visitNested(message.nestedArray, context),
   );
 
@@ -60,7 +60,7 @@ function visitMessage(message: protobuf.Type, context: Context): GraphQLNamedTyp
       fields: () => visitInputFields(message.fieldsArray, context),
     });
     context.setInput(inputType);
-    result.push(inputType);
+    result.push(inputType, ...visitInputMaps(message, context));
   }
 
   return result;
@@ -101,11 +101,12 @@ function visitOneOf(oneOf: protobuf.OneOf, context: Context): GraphQLUnionType {
   return unionType;
 }
 
-function visitMaps(message: protobuf.Type, context: Context) {
+function visitOutputMaps(message: protobuf.Type, context: Context): GraphQLObjectType<any, any, any>[] {
   return message.fieldsArray.map((field) => {
     if (!(field instanceof protobuf.MapField)) return null;
 
     field.resolve();
+
     const objectType = new GraphQLObjectType({
       name: context.getFullTypeName(field),
       fields: () => ({
@@ -125,6 +126,34 @@ function visitMaps(message: protobuf.Type, context: Context) {
     context.setType(objectType);
 
     return objectType;
+  });
+}
+
+function visitInputMaps(message: protobuf.Type, context: Context): GraphQLInputObjectType[] {
+  return message.fieldsArray.map((field) => {
+    if (!(field instanceof protobuf.MapField)) return null;
+
+    field.resolve();
+
+    const inputType = new GraphQLInputObjectType({
+      name: context.getFullTypeName(field) + context.inputTypeNameSuffix,
+      fields: () => ({
+        key: {
+          type: visitInputDataType(field.keyType, false, null, context),
+        },
+        value: {
+          type: visitInputDataType(
+            field.type,
+            field.repeated,
+            () => field.resolvedType,
+            context
+          ),
+        },
+      }),
+    });
+    context.setInput(inputType);
+
+    return inputType;
   });
 }
 

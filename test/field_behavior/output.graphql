@@ -24,6 +24,10 @@ input TypeAInput {
   attributes: [String_Attribute_map]
   fieldA: TypeA_TypeBInput
 }
+input String_Attribute_mapInput {
+  key: String!
+  value: AttributeInput
+}
 enum EnumA {
   ENUM_A_UNSPECIFIED
 }
