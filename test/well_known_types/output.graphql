@@ -19,10 +19,12 @@ type WellKnownTypes {
   bytesField: google_protobuf_BytesValue
   valueField: google_protobuf_Value
 }
+
 type google_protobuf_Any {
   type_url: String!
   value: String!
 }
+
 type google_protobuf_Api {
   name: String!
   methods: [google_protobuf_Method!]
@@ -32,6 +34,7 @@ type google_protobuf_Api {
   mixins: [google_protobuf_Mixin!]
   syntax: google_protobuf_Syntax!
 }
+
 type google_protobuf_Method {
   name: String!
   requestTypeUrl: String!
@@ -41,13 +44,16 @@ type google_protobuf_Method {
   options: [google_protobuf_Option!]
   syntax: google_protobuf_Syntax!
 }
+
 type google_protobuf_Mixin {
   name: String!
   root: String!
 }
+
 type google_protobuf_SourceContext {
   fileName: String!
 }
+
 type google_protobuf_Type {
   name: String!
   fields: [google_protobuf_Field!]
@@ -56,6 +62,7 @@ type google_protobuf_Type {
   sourceContext: google_protobuf_SourceContext
   syntax: google_protobuf_Syntax!
 }
+
 type google_protobuf_Field {
   kind: google_protobuf_Field_Kind!
   cardinality: google_protobuf_Field_Cardinality!
@@ -68,6 +75,7 @@ type google_protobuf_Field {
   jsonName: String!
   defaultValue: String!
 }
+
 enum google_protobuf_Field_Kind {
   TYPE_UNKNOWN
   TYPE_DOUBLE
@@ -89,12 +97,14 @@ enum google_protobuf_Field_Kind {
   TYPE_SINT32
   TYPE_SINT64
 }
+
 enum google_protobuf_Field_Cardinality {
   CARDINALITY_UNKNOWN
   CARDINALITY_OPTIONAL
   CARDINALITY_REQUIRED
   CARDINALITY_REPEATED
 }
+
 type google_protobuf_Enum {
   name: String!
   enumvalue: [google_protobuf_EnumValue!]
@@ -102,72 +112,94 @@ type google_protobuf_Enum {
   sourceContext: google_protobuf_SourceContext
   syntax: google_protobuf_Syntax!
 }
+
 type google_protobuf_EnumValue {
   name: String!
   number: Int!
   options: [google_protobuf_Option!]
 }
+
 type google_protobuf_Option {
   name: String!
   value: google_protobuf_Any
 }
+
 enum google_protobuf_Syntax {
   SYNTAX_PROTO2
   SYNTAX_PROTO3
 }
+
 type google_protobuf_Duration {
   seconds: Int!
   nanos: Int!
 }
+
 type google_protobuf_Empty
+
 type google_protobuf_FieldMask {
   paths: [String!]
 }
+
 type google_protobuf_Struct {
   fields: [String_google_protobuf_Value_map]
 }
+
 type String_google_protobuf_Value_map {
   key: String!
   value: google_protobuf_Value
 }
+
 type google_protobuf_Value {
   kind: google_protobuf_Value_kind
 }
+
 union google_protobuf_Value_kind = google_protobuf_NullValue! | Float! | String! | Boolean! | google_protobuf_Struct | google_protobuf_ListValue
+
 enum google_protobuf_NullValue {
   NULL_VALUE
 }
+
 type google_protobuf_ListValue {
   values: [google_protobuf_Value!]
 }
+
 type google_protobuf_Timestamp {
   seconds: Int!
   nanos: Int!
 }
+
 type google_protobuf_DoubleValue {
   value: Float!
 }
+
 type google_protobuf_FloatValue {
   value: Float!
 }
+
 type google_protobuf_Int64Value {
   value: Int!
 }
+
 type google_protobuf_UInt64Value {
   value: Int!
 }
+
 type google_protobuf_Int32Value {
   value: Int!
 }
+
 type google_protobuf_UInt32Value {
   value: Int!
 }
+
 type google_protobuf_BoolValue {
   value: Boolean!
 }
+
 type google_protobuf_StringValue {
   value: String!
 }
+
 type google_protobuf_BytesValue {
   value: String!
 }

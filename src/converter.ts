@@ -13,7 +13,7 @@ export function convert(filename: string, options?: ConvertOptions) {
 
   const context = new Context(options);
   const types = visit(root.nestedArray, context);
-  return types.map((type) => printType(type)).join("\n");
+  return types.map((type) => printType(type)).join("\n\n") + "\n";
 }
 
 type Resolver = (origin: string, target: string) => string;

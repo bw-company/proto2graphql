@@ -1,10 +1,12 @@
 type User {
   attributes: [String_Attribute_map]
 }
+
 type String_Attribute_map {
   key: String!
   value: Attribute
 }
+
 type Attribute {
   value: String!
 }
