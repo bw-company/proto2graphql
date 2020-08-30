@@ -4,6 +4,7 @@ import {
   GraphQLInt,
   GraphQLBoolean,
   GraphQLString,
+  GraphQLScalarType,
 } from "graphql";
 
 const ScalarTypeMap = {
@@ -43,7 +44,7 @@ export function isScalar(type: string) {
 }
 
 export function convertScalar(type: string) {
-  return (ScalarTypeMap as any)[type];
+  return (ScalarTypeMap as any)[type] as GraphQLScalarType;
 }
 
 declare global {
