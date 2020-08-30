@@ -5,7 +5,8 @@ import {
   GraphQLObjectType,
   GraphQLEnumType,
   GraphQLUnionType,
-  GraphQLList
+  GraphQLList,
+  GraphQLNonNull
 } from "graphql";
 import { Context, getType, setType } from "./context";
 import { fullTypeName, convertScalar, isScalar } from "./utils";
@@ -133,11 +134,14 @@ function visitFieldType(field: protobuf.Field, context: Context) {
     return new GraphQLList(getType(fullTypeName(field), context));
   }
 
+  const fieldBehaviors = getFieldBehaviors(field);
+
   return visitDataType(
     field.type,
     field.repeated,
     () => field.resolve().resolvedType,
-    context
+    context,
+    fieldBehaviors,
   );
 }
 
@@ -145,11 +149,39 @@ function visitDataType(
   type: string,
   repeated: Boolean,
   resolver: () => protobuf.ReflectionObject | null,
-  context: Context
+  context: Context,
+  fieldBehaviors?: Record<string, boolean>
 ) {
-  const baseType = isScalar(type)
+  const scalar = isScalar(type);
+  let dataType = scalar
     ? convertScalar(type)
     : getType(fullTypeName(resolver()), context);
 
-  return repeated ? new GraphQLList(baseType) : baseType;
+  if (repeated) {
+    dataType = new GraphQLList(new GraphQLNonNull(dataType));
+  }
+
+  const required = fieldBehaviors?.REQUIRED || (scalar && !fieldBehaviors?.OPTIONAL);
+  if (required) {
+    dataType = new GraphQLNonNull(dataType);
+  }
+
+  return dataType;
+}
+
+function getFieldBehaviors(field: protobuf.Field) {
+  const fieldBehaviors: Record<string, boolean> = {};
+
+  // Incorrectly typed
+  const parsedOptions = ((field.parsedOptions as any) ?? []) as Record<string, any>[];
+
+  parsedOptions.forEach((options) => {
+    Object.entries(options).forEach(([key, value]) => {
+      if (key === "(google.api.field_behavior)") {
+        fieldBehaviors[value] = true;
+      }
+    });
+  });
+
+  return fieldBehaviors;
 }

@@ -10,7 +10,7 @@ export function convert(filename: string) {
 
   // Provide resolver for protobuf's well-known types
   root.resolvePath = function(origin, target) {
-    if (target.startsWith("google/protobuf/")) {
+    if (target.startsWith("google/")) {
       return path.join(protosDir, target);
     }
     return defaultResolver(origin, target);
