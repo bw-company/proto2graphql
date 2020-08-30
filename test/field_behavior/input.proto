@@ -6,4 +6,9 @@ import "google/protobuf/wrappers.proto";
 message Test1 {
   string scalar = 1 [ (google.api.field_behavior) = OPTIONAL ];
   google.protobuf.StringValue nonScalar = 2 [ (google.api.field_behavior) = REQUIRED ];
+
+  oneof either {
+    google.protobuf.Int32Value int32Value = 3;
+    google.protobuf.StringValue stringValue = 4 [ (google.api.field_behavior) = REQUIRED ];
+  }
 }

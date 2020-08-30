@@ -1,7 +1,9 @@
 type Test1 {
   scalar: String
   nonScalar: google_protobuf_StringValue!
+  either: Test1_either
 }
+union Test1_either = google_protobuf_Int32Value | google_protobuf_StringValue!
 enum google_api_FieldBehavior {
   FIELD_BEHAVIOR_UNSPECIFIED
   OPTIONAL
