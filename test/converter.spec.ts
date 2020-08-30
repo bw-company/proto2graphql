@@ -17,8 +17,13 @@ console.log(includeDir);
 describe("converter", () => {
   tests().forEach((test) => {
     it(`handles ${test.replace(/_/g, " ")}`, () => {
+      const generateInputTypes = /field_behavior/.test(test);
+
       const testDir = path.join(DIR, test);
-      const actual = convert(path.join(testDir, "input.proto"), includeDir);
+      const actual = convert(path.join(testDir, "input.proto"), {
+        includeDir,
+        generateInputTypes,
+      });
       const expected = readFileSync(
         path.join(testDir, "output.graphql"),
         "UTF-8"

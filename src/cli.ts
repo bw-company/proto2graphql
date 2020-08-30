@@ -12,7 +12,9 @@ program
   .option("--include [path]", "path to include directory")
   .parse(process.argv);
 
-const schema = convert(program.input, program.include);
+const schema = convert(program.input, {
+  includeDir: program.include,
+});
 
 if (program.output) {
   writeFileSync(program.output, schema);

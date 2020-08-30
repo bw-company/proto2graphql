@@ -4,12 +4,17 @@ import * as path from "path";
 import { Root } from "protobufjs";
 import { visit } from "./visitor";
 
-export function convert(filename: string, includeDir?: string) {
+export interface ConvertOptions {
+  includeDir?: string;
+  generateInputTypes?: boolean;
+}
+
+export function convert(filename: string, options?: ConvertOptions) {
   const root = new Root();
-  root.resolvePath = resolverFactory(root.resolvePath, includeDir);
+  root.resolvePath = resolverFactory(root.resolvePath, options?.includeDir);
   root.loadSync(filename);
 
-  const types = visit(root.nestedArray);
+  const types = visit(root.nestedArray, options?.generateInputTypes ?? false);
   return types.map((type) => printType(type)).join("\n");
 }
 

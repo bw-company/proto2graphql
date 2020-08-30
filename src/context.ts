@@ -4,7 +4,10 @@ export class Context {
   private types: { [name: string]: GraphQLOutputType };
   private inputs: { [name: string]: GraphQLInputType };
 
-  constructor() {
+  public readonly generateInputTypes: boolean;
+
+  constructor(generateInputTypes: boolean) {
+    this.generateInputTypes = generateInputTypes;
     this.types = {};
     this.inputs = {};
   }

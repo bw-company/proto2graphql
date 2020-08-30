@@ -1,5 +1,5 @@
 type User {
-  type: UserType
+  type: UserType!
 }
 enum UserType {
   UNKOWN
