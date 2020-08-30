@@ -1,15 +1,19 @@
 import { GraphQLOutputType, GraphQLNamedType, GraphQLInputType } from "graphql";
-
-export const inputTypeNameSuffix = "Input";
+import { ConvertOptions } from "./options";
+import { getFullTypeName } from "./utils";
 
 export class Context {
   private types: { [name: string]: GraphQLOutputType };
   private inputs: { [name: string]: GraphQLInputType };
 
   public readonly generateInputTypes: boolean;
+  public readonly inputTypeNameSuffix: string;
+  private transformTypeName: (fullName: string) => string;
 
-  constructor(generateInputTypes: boolean) {
-    this.generateInputTypes = generateInputTypes;
+  constructor(options?: ConvertOptions) {
+    this.generateInputTypes = options?.generateInputTypes ?? false;
+    this.inputTypeNameSuffix = options?.inputTypeNameSuffix ?? "Input";
+    this.transformTypeName = options?.transformTypeName ?? ((v) => v);
     this.types = {};
     this.inputs = {};
   }
@@ -27,6 +31,10 @@ export class Context {
   }
 
   public getInput(name: string) {
-    return this.inputs[name] ?? this.inputs[name + inputTypeNameSuffix];
+    return this.inputs[name] ?? this.inputs[name + this.inputTypeNameSuffix];
+  }
+
+  public getFullTypeName(type: protobuf.ReflectionObject): string {
+    return this.transformTypeName(getFullTypeName(type));
   }
 }
