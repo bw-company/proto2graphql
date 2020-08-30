@@ -29,20 +29,25 @@ function visitNested(
   objects: protobuf.ReflectionObject[],
   context: Context
 ): GraphQLNamedType[] {
-  return objects
-    .map((object) => {
-      if (object instanceof protobuf.Type) {
-        return visitMessage(object, context);
-      }
-      if (object instanceof protobuf.Enum) {
-        return createEnum(object, context);
-      }
-      if (object instanceof protobuf.Namespace) {
-        return visitNested(object.nestedArray, context);
-      }
-    })
-    .flat()
-    .filter(Boolean);
+  const result: GraphQLNamedType[] = [];
+
+  objects.map((object) => {
+    if (object instanceof protobuf.Type) {
+      return visitMessage(object, context);
+    }
+    if (object instanceof protobuf.Enum) {
+      return [createEnum(object, context)];
+    }
+    if (object instanceof protobuf.Namespace) {
+      return visitNested(object.nestedArray, context);
+    }
+    return null;
+  }).forEach((val) => {
+    if (!val) return;
+    result.push(...val);
+  });
+
+  return result;
 }
 
 function visitMessage(

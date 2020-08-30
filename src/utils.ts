@@ -52,18 +52,6 @@ export function convertScalar(type: string) {
   return (ScalarTypeMap as any)[type] as GraphQLScalarType;
 }
 
-declare global {
-  interface Array<T> {
-    flat(): any[];
-  }
-}
-
-Array.prototype.flat = function () {
-  return this.reduce(function (arr: any[], flatting: any[]) {
-    return arr.concat(Array.isArray(flatting) ? flatting.flat() : flatting);
-  }, []);
-};
-
 export type FieldBehaviors = Set<string>;
 export function getFieldBehaviors(field: protobuf.Field): FieldBehaviors {
   const fieldBehaviors = new Set<string>();
