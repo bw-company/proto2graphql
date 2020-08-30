@@ -1,28 +1,36 @@
-type Test1 {
+type TypeA {
   scalar: String
+  enumValue: EnumA!
   nonScalar: google_protobuf_StringValue!
-  either: Test1_either
-  enumValue: Enum1!
+  either: TypeA_either
   attributes: [String_Attribute_map]
+  fieldA: TypeA_TypeB
 }
-union Test1_either = google_protobuf_Int32Value | google_protobuf_StringValue!
+union TypeA_either = google_protobuf_Int32Value | google_protobuf_StringValue!
 type String_Attribute_map {
   key: String!
   value: Attribute
 }
-input Test1FullInput {
-  scalar: String
-  nonScalar: google_protobuf_StringValueFullInput!
-  enumValue: Enum1!
-  attributes: [String_Attribute_map]
+type TypeA_TypeB {
+  fieldB: Int!
 }
-enum Enum1 {
-  ENUM1_UNSPECIFIED
+input TypeA_TypeBInput {
+  fieldB: Int!
+}
+input TypeAInput {
+  scalar: String
+  enumValue: EnumA!
+  nonScalar: google_protobuf_StringValueInput!
+  attributes: [String_Attribute_map]
+  fieldA: TypeA_TypeBInput
+}
+enum EnumA {
+  ENUM_A_UNSPECIFIED
 }
 type Attribute {
   value: String!
 }
-input AttributeFullInput {
+input AttributeInput {
   value: String!
 }
 enum google_api_FieldBehavior {
@@ -36,8 +44,8 @@ enum google_api_FieldBehavior {
 type google_protobuf_FileDescriptorSet {
   file: [google_protobuf_FileDescriptorProto!]
 }
-input google_protobuf_FileDescriptorSetFullInput {
-  file: [google_protobuf_FileDescriptorProtoFullInput!]
+input google_protobuf_FileDescriptorSetInput {
+  file: [google_protobuf_FileDescriptorProtoInput!]
 }
 type google_protobuf_FileDescriptorProto {
   name: String!
@@ -53,18 +61,18 @@ type google_protobuf_FileDescriptorProto {
   sourceCodeInfo: google_protobuf_SourceCodeInfo
   syntax: String!
 }
-input google_protobuf_FileDescriptorProtoFullInput {
+input google_protobuf_FileDescriptorProtoInput {
   name: String!
   package: String!
   dependency: [String!]
   publicDependency: [Int!]
   weakDependency: [Int!]
-  messageType: [google_protobuf_DescriptorProtoFullInput!]
-  enumType: [google_protobuf_EnumDescriptorProtoFullInput!]
-  service: [google_protobuf_ServiceDescriptorProtoFullInput!]
-  extension: [google_protobuf_FieldDescriptorProtoFullInput!]
-  options: google_protobuf_FileOptionsFullInput
-  sourceCodeInfo: google_protobuf_SourceCodeInfoFullInput
+  messageType: [google_protobuf_DescriptorProtoInput!]
+  enumType: [google_protobuf_EnumDescriptorProtoInput!]
+  service: [google_protobuf_ServiceDescriptorProtoInput!]
+  extension: [google_protobuf_FieldDescriptorProtoInput!]
+  options: google_protobuf_FileOptionsInput
+  sourceCodeInfo: google_protobuf_SourceCodeInfoInput
   syntax: String!
 }
 type google_protobuf_DescriptorProto {
@@ -84,36 +92,36 @@ type google_protobuf_DescriptorProto_ExtensionRange {
   end: Int!
   options: google_protobuf_ExtensionRangeOptions
 }
-input google_protobuf_DescriptorProto_ExtensionRangeFullInput {
+input google_protobuf_DescriptorProto_ExtensionRangeInput {
   start: Int!
   end: Int!
-  options: google_protobuf_ExtensionRangeOptionsFullInput
+  options: google_protobuf_ExtensionRangeOptionsInput
 }
 type google_protobuf_DescriptorProto_ReservedRange {
   start: Int!
   end: Int!
 }
-input google_protobuf_DescriptorProto_ReservedRangeFullInput {
+input google_protobuf_DescriptorProto_ReservedRangeInput {
   start: Int!
   end: Int!
 }
-input google_protobuf_DescriptorProtoFullInput {
+input google_protobuf_DescriptorProtoInput {
   name: String!
-  field: [google_protobuf_FieldDescriptorProtoFullInput!]
-  extension: [google_protobuf_FieldDescriptorProtoFullInput!]
-  nestedType: [google_protobuf_DescriptorProtoFullInput!]
-  enumType: [google_protobuf_EnumDescriptorProtoFullInput!]
-  extensionRange: [google_protobuf_DescriptorProto_ExtensionRangeFullInput!]
-  oneofDecl: [google_protobuf_OneofDescriptorProtoFullInput!]
-  options: google_protobuf_MessageOptionsFullInput
-  reservedRange: [google_protobuf_DescriptorProto_ReservedRangeFullInput!]
+  field: [google_protobuf_FieldDescriptorProtoInput!]
+  extension: [google_protobuf_FieldDescriptorProtoInput!]
+  nestedType: [google_protobuf_DescriptorProtoInput!]
+  enumType: [google_protobuf_EnumDescriptorProtoInput!]
+  extensionRange: [google_protobuf_DescriptorProto_ExtensionRangeInput!]
+  oneofDecl: [google_protobuf_OneofDescriptorProtoInput!]
+  options: google_protobuf_MessageOptionsInput
+  reservedRange: [google_protobuf_DescriptorProto_ReservedRangeInput!]
   reservedName: [String!]
 }
 type google_protobuf_ExtensionRangeOptions {
   uninterpretedOption: [google_protobuf_UninterpretedOption!]
 }
-input google_protobuf_ExtensionRangeOptionsFullInput {
-  uninterpretedOption: [google_protobuf_UninterpretedOptionFullInput!]
+input google_protobuf_ExtensionRangeOptionsInput {
+  uninterpretedOption: [google_protobuf_UninterpretedOptionInput!]
 }
 type google_protobuf_FieldDescriptorProto {
   name: String!
@@ -153,7 +161,7 @@ enum google_protobuf_FieldDescriptorProto_Label {
   LABEL_REQUIRED
   LABEL_REPEATED
 }
-input google_protobuf_FieldDescriptorProtoFullInput {
+input google_protobuf_FieldDescriptorProtoInput {
   name: String!
   number: Int!
   label: google_protobuf_FieldDescriptorProto_Label!
@@ -163,16 +171,16 @@ input google_protobuf_FieldDescriptorProtoFullInput {
   defaultValue: String!
   oneofIndex: Int!
   jsonName: String!
-  options: google_protobuf_FieldOptionsFullInput
+  options: google_protobuf_FieldOptionsInput
   proto3Optional: Boolean!
 }
 type google_protobuf_OneofDescriptorProto {
   name: String!
   options: google_protobuf_OneofOptions
 }
-input google_protobuf_OneofDescriptorProtoFullInput {
+input google_protobuf_OneofDescriptorProtoInput {
   name: String!
-  options: google_protobuf_OneofOptionsFullInput
+  options: google_protobuf_OneofOptionsInput
 }
 type google_protobuf_EnumDescriptorProto {
   name: String!
@@ -185,15 +193,15 @@ type google_protobuf_EnumDescriptorProto_EnumReservedRange {
   start: Int!
   end: Int!
 }
-input google_protobuf_EnumDescriptorProto_EnumReservedRangeFullInput {
+input google_protobuf_EnumDescriptorProto_EnumReservedRangeInput {
   start: Int!
   end: Int!
 }
-input google_protobuf_EnumDescriptorProtoFullInput {
+input google_protobuf_EnumDescriptorProtoInput {
   name: String!
-  value: [google_protobuf_EnumValueDescriptorProtoFullInput!]
-  options: google_protobuf_EnumOptionsFullInput
-  reservedRange: [google_protobuf_EnumDescriptorProto_EnumReservedRangeFullInput!]
+  value: [google_protobuf_EnumValueDescriptorProtoInput!]
+  options: google_protobuf_EnumOptionsInput
+  reservedRange: [google_protobuf_EnumDescriptorProto_EnumReservedRangeInput!]
   reservedName: [String!]
 }
 type google_protobuf_EnumValueDescriptorProto {
@@ -201,20 +209,20 @@ type google_protobuf_EnumValueDescriptorProto {
   number: Int!
   options: google_protobuf_EnumValueOptions
 }
-input google_protobuf_EnumValueDescriptorProtoFullInput {
+input google_protobuf_EnumValueDescriptorProtoInput {
   name: String!
   number: Int!
-  options: google_protobuf_EnumValueOptionsFullInput
+  options: google_protobuf_EnumValueOptionsInput
 }
 type google_protobuf_ServiceDescriptorProto {
   name: String!
   method: [google_protobuf_MethodDescriptorProto!]
   options: google_protobuf_ServiceOptions
 }
-input google_protobuf_ServiceDescriptorProtoFullInput {
+input google_protobuf_ServiceDescriptorProtoInput {
   name: String!
-  method: [google_protobuf_MethodDescriptorProtoFullInput!]
-  options: google_protobuf_ServiceOptionsFullInput
+  method: [google_protobuf_MethodDescriptorProtoInput!]
+  options: google_protobuf_ServiceOptionsInput
 }
 type google_protobuf_MethodDescriptorProto {
   name: String!
@@ -224,11 +232,11 @@ type google_protobuf_MethodDescriptorProto {
   clientStreaming: Boolean!
   serverStreaming: Boolean!
 }
-input google_protobuf_MethodDescriptorProtoFullInput {
+input google_protobuf_MethodDescriptorProtoInput {
   name: String!
   inputType: String!
   outputType: String!
-  options: google_protobuf_MethodOptionsFullInput
+  options: google_protobuf_MethodOptionsInput
   clientStreaming: Boolean!
   serverStreaming: Boolean!
 }
@@ -260,7 +268,7 @@ enum google_protobuf_FileOptions_OptimizeMode {
   CODE_SIZE
   LITE_RUNTIME
 }
-input google_protobuf_FileOptionsFullInput {
+input google_protobuf_FileOptionsInput {
   javaPackage: String!
   javaOuterClassname: String!
   javaMultipleFiles: Boolean!
@@ -281,7 +289,7 @@ input google_protobuf_FileOptionsFullInput {
   phpNamespace: String!
   phpMetadataNamespace: String!
   rubyPackage: String!
-  uninterpretedOption: [google_protobuf_UninterpretedOptionFullInput!]
+  uninterpretedOption: [google_protobuf_UninterpretedOptionInput!]
 }
 type google_protobuf_MessageOptions {
   messageSetWireFormat: Boolean!
@@ -290,12 +298,12 @@ type google_protobuf_MessageOptions {
   mapEntry: Boolean!
   uninterpretedOption: [google_protobuf_UninterpretedOption!]
 }
-input google_protobuf_MessageOptionsFullInput {
+input google_protobuf_MessageOptionsInput {
   messageSetWireFormat: Boolean!
   noStandardDescriptorAccessor: Boolean!
   deprecated: Boolean!
   mapEntry: Boolean!
-  uninterpretedOption: [google_protobuf_UninterpretedOptionFullInput!]
+  uninterpretedOption: [google_protobuf_UninterpretedOptionInput!]
 }
 type google_protobuf_FieldOptions {
   ctype: google_protobuf_FieldOptions_CType!
@@ -317,47 +325,47 @@ enum google_protobuf_FieldOptions_JSType {
   JS_STRING
   JS_NUMBER
 }
-input google_protobuf_FieldOptionsFullInput {
+input google_protobuf_FieldOptionsInput {
   ctype: google_protobuf_FieldOptions_CType!
   packed: Boolean!
   jstype: google_protobuf_FieldOptions_JSType!
   lazy: Boolean!
   deprecated: Boolean!
   weak: Boolean!
-  uninterpretedOption: [google_protobuf_UninterpretedOptionFullInput!]
+  uninterpretedOption: [google_protobuf_UninterpretedOptionInput!]
   .google.api.fieldBehavior: [google_api_FieldBehavior!]
 }
 type google_protobuf_OneofOptions {
   uninterpretedOption: [google_protobuf_UninterpretedOption!]
 }
-input google_protobuf_OneofOptionsFullInput {
-  uninterpretedOption: [google_protobuf_UninterpretedOptionFullInput!]
+input google_protobuf_OneofOptionsInput {
+  uninterpretedOption: [google_protobuf_UninterpretedOptionInput!]
 }
 type google_protobuf_EnumOptions {
   allowAlias: Boolean!
   deprecated: Boolean!
   uninterpretedOption: [google_protobuf_UninterpretedOption!]
 }
-input google_protobuf_EnumOptionsFullInput {
+input google_protobuf_EnumOptionsInput {
   allowAlias: Boolean!
   deprecated: Boolean!
-  uninterpretedOption: [google_protobuf_UninterpretedOptionFullInput!]
+  uninterpretedOption: [google_protobuf_UninterpretedOptionInput!]
 }
 type google_protobuf_EnumValueOptions {
   deprecated: Boolean!
   uninterpretedOption: [google_protobuf_UninterpretedOption!]
 }
-input google_protobuf_EnumValueOptionsFullInput {
+input google_protobuf_EnumValueOptionsInput {
   deprecated: Boolean!
-  uninterpretedOption: [google_protobuf_UninterpretedOptionFullInput!]
+  uninterpretedOption: [google_protobuf_UninterpretedOptionInput!]
 }
 type google_protobuf_ServiceOptions {
   deprecated: Boolean!
   uninterpretedOption: [google_protobuf_UninterpretedOption!]
 }
-input google_protobuf_ServiceOptionsFullInput {
+input google_protobuf_ServiceOptionsInput {
   deprecated: Boolean!
-  uninterpretedOption: [google_protobuf_UninterpretedOptionFullInput!]
+  uninterpretedOption: [google_protobuf_UninterpretedOptionInput!]
 }
 type google_protobuf_MethodOptions {
   deprecated: Boolean!
@@ -369,10 +377,10 @@ enum google_protobuf_MethodOptions_IdempotencyLevel {
   NO_SIDE_EFFECTS
   IDEMPOTENT
 }
-input google_protobuf_MethodOptionsFullInput {
+input google_protobuf_MethodOptionsInput {
   deprecated: Boolean!
   idempotencyLevel: google_protobuf_MethodOptions_IdempotencyLevel!
-  uninterpretedOption: [google_protobuf_UninterpretedOptionFullInput!]
+  uninterpretedOption: [google_protobuf_UninterpretedOptionInput!]
 }
 type google_protobuf_UninterpretedOption {
   name: [google_protobuf_UninterpretedOption_NamePart!]
@@ -387,12 +395,12 @@ type google_protobuf_UninterpretedOption_NamePart {
   namePart: String!
   isExtension: Boolean!
 }
-input google_protobuf_UninterpretedOption_NamePartFullInput {
+input google_protobuf_UninterpretedOption_NamePartInput {
   namePart: String!
   isExtension: Boolean!
 }
-input google_protobuf_UninterpretedOptionFullInput {
-  name: [google_protobuf_UninterpretedOption_NamePartFullInput!]
+input google_protobuf_UninterpretedOptionInput {
+  name: [google_protobuf_UninterpretedOption_NamePartInput!]
   identifierValue: String!
   positiveIntValue: Int!
   negativeIntValue: Int!
@@ -410,15 +418,15 @@ type google_protobuf_SourceCodeInfo_Location {
   trailingComments: String!
   leadingDetachedComments: [String!]
 }
-input google_protobuf_SourceCodeInfo_LocationFullInput {
+input google_protobuf_SourceCodeInfo_LocationInput {
   path: [Int!]
   span: [Int!]
   leadingComments: String!
   trailingComments: String!
   leadingDetachedComments: [String!]
 }
-input google_protobuf_SourceCodeInfoFullInput {
-  location: [google_protobuf_SourceCodeInfo_LocationFullInput!]
+input google_protobuf_SourceCodeInfoInput {
+  location: [google_protobuf_SourceCodeInfo_LocationInput!]
 }
 type google_protobuf_GeneratedCodeInfo {
   annotation: [google_protobuf_GeneratedCodeInfo_Annotation!]
@@ -429,66 +437,66 @@ type google_protobuf_GeneratedCodeInfo_Annotation {
   begin: Int!
   end: Int!
 }
-input google_protobuf_GeneratedCodeInfo_AnnotationFullInput {
+input google_protobuf_GeneratedCodeInfo_AnnotationInput {
   path: [Int!]
   sourceFile: String!
   begin: Int!
   end: Int!
 }
-input google_protobuf_GeneratedCodeInfoFullInput {
-  annotation: [google_protobuf_GeneratedCodeInfo_AnnotationFullInput!]
+input google_protobuf_GeneratedCodeInfoInput {
+  annotation: [google_protobuf_GeneratedCodeInfo_AnnotationInput!]
 }
 type google_protobuf_DoubleValue {
   value: Float!
 }
-input google_protobuf_DoubleValueFullInput {
+input google_protobuf_DoubleValueInput {
   value: Float!
 }
 type google_protobuf_FloatValue {
   value: Float!
 }
-input google_protobuf_FloatValueFullInput {
+input google_protobuf_FloatValueInput {
   value: Float!
 }
 type google_protobuf_Int64Value {
   value: Int!
 }
-input google_protobuf_Int64ValueFullInput {
+input google_protobuf_Int64ValueInput {
   value: Int!
 }
 type google_protobuf_UInt64Value {
   value: Int!
 }
-input google_protobuf_UInt64ValueFullInput {
+input google_protobuf_UInt64ValueInput {
   value: Int!
 }
 type google_protobuf_Int32Value {
   value: Int!
 }
-input google_protobuf_Int32ValueFullInput {
+input google_protobuf_Int32ValueInput {
   value: Int!
 }
 type google_protobuf_UInt32Value {
   value: Int!
 }
-input google_protobuf_UInt32ValueFullInput {
+input google_protobuf_UInt32ValueInput {
   value: Int!
 }
 type google_protobuf_BoolValue {
   value: Boolean!
 }
-input google_protobuf_BoolValueFullInput {
+input google_protobuf_BoolValueInput {
   value: Boolean!
 }
 type google_protobuf_StringValue {
   value: String!
 }
-input google_protobuf_StringValueFullInput {
+input google_protobuf_StringValueInput {
   value: String!
 }
 type google_protobuf_BytesValue {
   value: String!
 }
-input google_protobuf_BytesValueFullInput {
+input google_protobuf_BytesValueInput {
   value: String!
 }

@@ -5,6 +5,13 @@ import {
   GraphQLBoolean,
   GraphQLString,
   GraphQLScalarType,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLType,
+  isScalarType,
+  isEnumType,
+  GraphQLOutputType,
+  GraphQLInputType,
 } from "graphql";
 
 const ScalarTypeMap = {
@@ -58,3 +65,46 @@ Array.prototype.flat = function () {
     return arr.concat(Array.isArray(flatting) ? flatting.flat() : flatting);
   }, []);
 };
+
+export type FieldBehaviors = Set<string>;
+export function getFieldBehaviors(field: protobuf.Field): FieldBehaviors {
+  const fieldBehaviors = new Set<string>();
+
+  // Incorrectly typed
+  const parsedOptions = ((field.parsedOptions as any) ?? []) as Record<
+    string,
+    any
+  >[];
+
+  parsedOptions.forEach((options) => {
+    Object.entries(options).forEach(([key, value]) => {
+      if (key === "(google.api.field_behavior)") {
+        fieldBehaviors.add(value);
+      }
+    });
+  });
+
+  return fieldBehaviors;
+}
+
+export function wrapType<T extends GraphQLType>(
+  type: T,
+  repeated: boolean,
+  fieldBehaviors?: Set<string>
+): T {
+  let result: GraphQLType = type;
+
+  if (repeated) {
+    result = new GraphQLList(new GraphQLNonNull(result));
+  }
+
+  const requiredByDefault = isScalarType(result) || isEnumType(result);
+  const required =
+    fieldBehaviors?.has("REQUIRED") ||
+    (requiredByDefault && !fieldBehaviors?.has("OPTIONAL"));
+  if (required) {
+    result = new GraphQLNonNull(result);
+  }
+
+  return result as T;
+}

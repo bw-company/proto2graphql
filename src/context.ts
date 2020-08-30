@@ -1,5 +1,7 @@
 import { GraphQLOutputType, GraphQLNamedType, GraphQLInputType } from "graphql";
 
+export const inputTypeNameSuffix = "Input";
+
 export class Context {
   private types: { [name: string]: GraphQLOutputType };
   private inputs: { [name: string]: GraphQLInputType };
@@ -25,7 +27,6 @@ export class Context {
   }
 
   public getInput(name: string) {
-    return this.inputs[name];
+    return this.inputs[name] ?? this.inputs[name + inputTypeNameSuffix];
   }
 }
-

@@ -6,18 +6,14 @@ import {
   GraphQLEnumType,
   GraphQLUnionType,
   GraphQLList,
-  GraphQLNonNull,
   GraphQLOutputType,
   GraphQLInputObjectType,
   GraphQLInputFieldConfigMap,
   GraphQLInputType,
-  isScalarType,
-  isEnumType,
   GraphQLEnumValueConfigMap,
-  GraphQLType,
 } from "graphql";
-import { Context } from "./context";
-import { fullTypeName, convertScalar, isScalar } from "./utils";
+import { Context, inputTypeNameSuffix } from "./context";
+import { fullTypeName, convertScalar, isScalar, getFieldBehaviors, FieldBehaviors, wrapType } from "./utils";
 
 export function visit(objects: protobuf.ReflectionObject[], generateInputTypes: boolean) {
   return visitNested(objects, new Context(generateInputTypes));
@@ -43,12 +39,12 @@ function visitNested(
     .filter(Boolean);
 }
 
-function visitMessage(message: protobuf.Type, context: Context) {
+function visitMessage(message: protobuf.Type, context: Context): GraphQLNamedType[] {
   const result: GraphQLNamedType[] = [];
 
   const objectType = new GraphQLObjectType({
     name: fullTypeName(message),
-    fields: () => visitFields(message.fieldsArray, context),
+    fields: () => visitOutputFields(message.fieldsArray, context),
   });
   context.setType(objectType);
   result.push(
@@ -60,7 +56,7 @@ function visitMessage(message: protobuf.Type, context: Context) {
 
   if (context.generateInputTypes) {
     const inputType = new GraphQLInputObjectType({
-      name: fullTypeName(message) + "FullInput",
+      name: fullTypeName(message) + inputTypeNameSuffix,
       fields: () => visitInputFields(message.fieldsArray, context),
     });
     context.setInput(inputType);
@@ -99,7 +95,7 @@ function visitOneOf(oneOf: protobuf.OneOf, context: Context): GraphQLUnionType {
   const unionType = new GraphQLUnionType({
     name: fullTypeName(oneOf),
     types: () =>
-      oneOf.fieldsArray.map((field) => visitFieldType(field, context) as GraphQLObjectType),
+      oneOf.fieldsArray.map((field) => visitOutputFieldType(field, context) as GraphQLObjectType),
   });
   context.setType(unionType);
   return unionType;
@@ -132,7 +128,7 @@ function visitMaps(message: protobuf.Type, context: Context) {
   });
 }
 
-function visitFields<TSource, TContext, TArgs>(
+function visitOutputFields<TSource, TContext, TArgs>(
   fields: protobuf.Field[],
   context: Context
 ): GraphQLFieldConfigMap<TSource, TContext, TArgs> {
@@ -144,7 +140,7 @@ function visitFields<TSource, TContext, TArgs>(
       };
     } else {
       map[field.name] = {
-        type: visitFieldType(field, context),
+        type: visitOutputFieldType(field, context),
       };
     }
   });
@@ -170,7 +166,7 @@ function visitInputFields(
   return map;
 }
 
-function visitFieldType(field: protobuf.Field, context: Context): GraphQLOutputType {
+function visitOutputFieldType(field: protobuf.Field, context: Context): GraphQLOutputType {
   if (field instanceof protobuf.MapField) {
     return new GraphQLList(context.getType(fullTypeName(field)));
   }
@@ -205,75 +201,26 @@ function visitInputFieldType(field: protobuf.Field, context: Context): GraphQLIn
 
 function visitOutputDataType(
   type: string,
-  repeated: Boolean,
+  repeated: boolean,
   resolver: () => protobuf.ReflectionObject | null,
   context: Context,
-  fieldBehaviors?: Set<string>
+  fieldBehaviors?: FieldBehaviors
 ): GraphQLOutputType {
-  let dataType = isScalar(type)
+  const dataType = isScalar(type)
     ? convertScalar(type)
     : context.getType(fullTypeName(resolver()));
-
-  if (repeated) {
-    dataType = new GraphQLList(new GraphQLNonNull(dataType));
-  }
-
-  const required =
-    fieldBehaviors?.has("REQUIRED") || ((isScalarType(dataType) || isEnumType(dataType)) && !fieldBehaviors?.has("OPTIONAL"));
-  if (required) {
-    dataType = new GraphQLNonNull(dataType);
-  }
-
-  return dataType;
+  return wrapType(dataType, repeated, fieldBehaviors);
 }
 
 function visitInputDataType(
   type: string,
-  repeated: Boolean,
+  repeated: boolean,
   resolver: () => protobuf.ReflectionObject | null,
   context: Context,
-  fieldBehaviors?: Set<string>
+  fieldBehaviors?: FieldBehaviors
 ): GraphQLInputType | null {
-  let dataType: GraphQLInputType | null = null;
-
-  if (isScalar(type)) {
-    dataType = convertScalar(type);
-  } else {
-    const name = fullTypeName(resolver());
-    dataType = context.getInput(name + "FullInput") ?? context.getInput(name);
-  }
-
-  if (!dataType) return null;
-
-  if (repeated) {
-    dataType = new GraphQLList(new GraphQLNonNull(dataType));
-  }
-
-  const required =
-    fieldBehaviors?.has("REQUIRED") || ((isScalarType(dataType) || isEnumType(dataType)) && !fieldBehaviors?.has("OPTIONAL"));
-  if (required) {
-    dataType = new GraphQLNonNull(dataType);
-  }
-
-  return dataType;
-}
-
-function getFieldBehaviors(field: protobuf.Field) {
-  const fieldBehaviors = new Set<string>();
-
-  // Incorrectly typed
-  const parsedOptions = ((field.parsedOptions as any) ?? []) as Record<
-    string,
-    any
-  >[];
-
-  parsedOptions.forEach((options) => {
-    Object.entries(options).forEach(([key, value]) => {
-      if (key === "(google.api.field_behavior)") {
-        fieldBehaviors.add(value);
-      }
-    });
-  });
-
-  return fieldBehaviors;
+  const dataType = isScalar(type)
+    ? convertScalar(type)
+    : context.getInput(fullTypeName(resolver()));
+  return dataType ? wrapType(dataType, repeated, fieldBehaviors) : null;
 }

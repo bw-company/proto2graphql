@@ -3,21 +3,27 @@ syntax = "proto3";
 import "google/api/field_behavior.proto";
 import "google/protobuf/wrappers.proto";
 
-message Test1 {
+message TypeA {
   string scalar = 1 [ (google.api.field_behavior) = OPTIONAL ];
-  google.protobuf.StringValue non_scalar = 2 [ (google.api.field_behavior) = REQUIRED ];
+  EnumA enum_value = 2;
+
+  google.protobuf.StringValue nonScalar = 3 [ (google.api.field_behavior) = REQUIRED ];
 
   oneof either {
-    google.protobuf.Int32Value int32_value = 3;
-    google.protobuf.StringValue string_value = 4 [ (google.api.field_behavior) = REQUIRED ];
+    google.protobuf.Int32Value int32Value = 4;
+    google.protobuf.StringValue stringValue = 5 [ (google.api.field_behavior) = REQUIRED ];
   }
 
-  Enum1 enum_value = 5;
   map<string, Attribute> attributes = 6;
+  TypeB fieldA = 7;
+
+  message TypeB {
+    int32 fieldB = 1;
+  }
 }
 
-enum Enum1 {
-  ENUM1_UNSPECIFIED = 0;
+enum EnumA {
+  ENUM_A_UNSPECIFIED = 0;
 }
 
 message Attribute {
