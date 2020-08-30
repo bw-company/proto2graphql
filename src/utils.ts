@@ -10,8 +10,6 @@ import {
   GraphQLType,
   isScalarType,
   isEnumType,
-  GraphQLOutputType,
-  GraphQLInputType,
 } from "graphql";
 
 const ScalarTypeMap = {
@@ -32,17 +30,17 @@ const ScalarTypeMap = {
   bytes: GraphQLString,
 };
 
-export function fullTypeName(type: protobuf.ReflectionObject): string {
+export function getFullTypeName(type: protobuf.ReflectionObject): string {
   if (type instanceof protobuf.MapField) {
     const keyType = convertScalar(type.keyType);
     const valueType = isScalar(type.type)
       ? convertScalar(type.type)
-      : fullTypeName(type.resolvedType);
+      : getFullTypeName(type.resolvedType);
     return `${keyType}_${valueType}_map`;
   }
 
   return type.parent && type.parent.name
-    ? `${fullTypeName(type.parent)}_${type.name}`
+    ? `${getFullTypeName(type.parent)}_${type.name}`
     : type.name;
 }
 

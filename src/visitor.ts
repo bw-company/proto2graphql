@@ -12,11 +12,11 @@ import {
   GraphQLInputType,
   GraphQLEnumValueConfigMap,
 } from "graphql";
-import { Context, inputTypeNameSuffix } from "./context";
-import { fullTypeName, convertScalar, isScalar, getFieldBehaviors, FieldBehaviors, wrapType } from "./utils";
+import { Context } from "./context";
+import { convertScalar, isScalar, getFieldBehaviors, FieldBehaviors, wrapType } from "./utils";
 
-export function visit(objects: protobuf.ReflectionObject[], generateInputTypes: boolean) {
-  return visitNested(objects, new Context(generateInputTypes));
+export function visit(objects: protobuf.ReflectionObject[], context: Context) {
+  return visitNested(objects, context);
 }
 
 function visitNested(
@@ -43,7 +43,7 @@ function visitMessage(message: protobuf.Type, context: Context): GraphQLNamedTyp
   const result: GraphQLNamedType[] = [];
 
   const objectType = new GraphQLObjectType({
-    name: fullTypeName(message),
+    name: context.getFullTypeName(message),
     fields: () => visitOutputFields(message.fieldsArray, context),
   });
   context.setType(objectType);
@@ -56,7 +56,7 @@ function visitMessage(message: protobuf.Type, context: Context): GraphQLNamedTyp
 
   if (context.generateInputTypes) {
     const inputType = new GraphQLInputObjectType({
-      name: fullTypeName(message) + inputTypeNameSuffix,
+      name: context.getFullTypeName(message) + context.inputTypeNameSuffix,
       fields: () => visitInputFields(message.fieldsArray, context),
     });
     context.setInput(inputType);
@@ -75,7 +75,7 @@ function visitEnum(enm: protobuf.Enum, context: Context): GraphQLEnumType {
   });
 
   const enumType = new GraphQLEnumType({
-    name: fullTypeName(enm),
+    name: context.getFullTypeName(enm),
     values,
   });
   context.setType(enumType);
@@ -93,9 +93,9 @@ function visitOneOfs(message: protobuf.Type, context: Context): GraphQLUnionType
 
 function visitOneOf(oneOf: protobuf.OneOf, context: Context): GraphQLUnionType {
   const unionType = new GraphQLUnionType({
-    name: fullTypeName(oneOf),
+    name: context.getFullTypeName(oneOf),
     types: () =>
-      oneOf.fieldsArray.map((field) => visitOutputFieldType(field, context) as GraphQLObjectType),
+      oneOf.fieldsArray.map((field) => visitOutputFieldType(field, context) as GraphQLObjectType | null).filter(Boolean),
   });
   context.setType(unionType);
   return unionType;
@@ -107,7 +107,7 @@ function visitMaps(message: protobuf.Type, context: Context) {
 
     field.resolve();
     const objectType = new GraphQLObjectType({
-      name: fullTypeName(field),
+      name: context.getFullTypeName(field),
       fields: () => ({
         key: {
           type: visitOutputDataType(field.keyType, false, null, context),
@@ -139,9 +139,8 @@ function visitOutputFields<TSource, TContext, TArgs>(
         type: visitOneOf(field.partOf, context),
       };
     } else {
-      map[field.name] = {
-        type: visitOutputFieldType(field, context),
-      };
+      const type = visitOutputFieldType(field, context);
+      if (type) map[field.name] = { type };
     }
   });
   return map;
@@ -166,12 +165,13 @@ function visitInputFields(
   return map;
 }
 
-function visitOutputFieldType(field: protobuf.Field, context: Context): GraphQLOutputType {
-  if (field instanceof protobuf.MapField) {
-    return new GraphQLList(context.getType(fullTypeName(field)));
-  }
-
+function visitOutputFieldType(field: protobuf.Field, context: Context): GraphQLOutputType | null {
   const fieldBehaviors = getFieldBehaviors(field);
+  if (fieldBehaviors.has("INPUT_ONLY")) return null;
+
+  if (field instanceof protobuf.MapField) {
+    return new GraphQLList(context.getType(context.getFullTypeName(field)));
+  }
 
   return visitOutputDataType(
     field.type,
@@ -187,7 +187,7 @@ function visitInputFieldType(field: protobuf.Field, context: Context): GraphQLIn
   if (fieldBehaviors.has("OUTPUT_ONLY")) return null;
 
   if (field instanceof protobuf.MapField) {
-    return new GraphQLList(context.getType(fullTypeName(field)));
+    return new GraphQLList(context.getType(context.getFullTypeName(field)));
   }
 
   return visitInputDataType(
@@ -208,7 +208,7 @@ function visitOutputDataType(
 ): GraphQLOutputType {
   const dataType = isScalar(type)
     ? convertScalar(type)
-    : context.getType(fullTypeName(resolver()));
+    : context.getType(context.getFullTypeName(resolver()));
   return wrapType(dataType, repeated, fieldBehaviors);
 }
 
@@ -221,6 +221,6 @@ function visitInputDataType(
 ): GraphQLInputType | null {
   const dataType = isScalar(type)
     ? convertScalar(type)
-    : context.getInput(fullTypeName(resolver()));
+    : context.getInput(context.getFullTypeName(resolver()));
   return dataType ? wrapType(dataType, repeated, fieldBehaviors) : null;
 }

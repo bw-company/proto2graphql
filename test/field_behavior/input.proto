@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-import "google/api/field_behavior.proto";
+// import "google/api/field_behavior.proto";
 import "google/protobuf/wrappers.proto";
 
 message TypeA {
@@ -28,4 +28,10 @@ enum EnumA {
 
 message Attribute {
   string value = 1;
+}
+
+message TypeC {
+  string inputOnly = 1 [ (google.api.field_behavior) = INPUT_ONLY ];
+  string outputOnly = 2 [ (google.api.field_behavior) = OUTPUT_ONLY ];
+  string immutable = 3 [ (google.api.field_behavior) = IMMUTABLE ];
 }
