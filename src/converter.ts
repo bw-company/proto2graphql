@@ -1,8 +1,8 @@
-import { existsSync } from 'fs';
-import {printType} from "graphql";
+import { existsSync } from "fs";
+import { printType } from "graphql";
 import * as path from "path";
-import {Root} from "protobufjs";
-import {visit} from "./visitor";
+import { Root } from "protobufjs";
+import { visit } from "./visitor";
 
 export function convert(filename: string, includeDir?: string) {
   const root = new Root();
@@ -10,11 +10,14 @@ export function convert(filename: string, includeDir?: string) {
   root.loadSync(filename);
 
   const types = visit(root.nestedArray);
-  return types.map(type => printType(type)).join("\n");
+  return types.map((type) => printType(type)).join("\n");
 }
 
 type Resolver = (origin: string, target: string) => string;
-function resolverFactory(defaultResolver: Resolver, includeDir?: string): Resolver {
+function resolverFactory(
+  defaultResolver: Resolver,
+  includeDir?: string
+): Resolver {
   const resolvedPaths: Record<string, string> = {};
 
   return (origin, target) => {

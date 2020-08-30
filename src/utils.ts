@@ -3,7 +3,7 @@ import {
   GraphQLFloat,
   GraphQLInt,
   GraphQLBoolean,
-  GraphQLString
+  GraphQLString,
 } from "graphql";
 
 const ScalarTypeMap = {
@@ -21,7 +21,7 @@ const ScalarTypeMap = {
   sfixed64: GraphQLInt,
   bool: GraphQLBoolean,
   string: GraphQLString,
-  bytes: GraphQLString
+  bytes: GraphQLString,
 };
 
 export function fullTypeName(type: protobuf.ReflectionObject): string {
@@ -52,8 +52,8 @@ declare global {
   }
 }
 
-Array.prototype.flat = function() {
-  return this.reduce(function(arr: any[], flatting: any[]) {
+Array.prototype.flat = function () {
+  return this.reduce(function (arr: any[], flatting: any[]) {
     return arr.concat(Array.isArray(flatting) ? flatting.flat() : flatting);
   }, []);
 };

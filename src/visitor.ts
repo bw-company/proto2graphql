@@ -6,7 +6,7 @@ import {
   GraphQLEnumType,
   GraphQLUnionType,
   GraphQLList,
-  GraphQLNonNull
+  GraphQLNonNull,
 } from "graphql";
 import { Context, getType, setType } from "./context";
 import { fullTypeName, convertScalar, isScalar } from "./utils";
@@ -20,7 +20,7 @@ function visitNested(
   context: Context
 ): GraphQLNamedType[] {
   return objects
-    .map(object => {
+    .map((object) => {
       if (object instanceof protobuf.Type) {
         return visitMessage(object, context);
       }
@@ -38,14 +38,14 @@ function visitNested(
 function visitMessage(message: protobuf.Type, context: Context) {
   const objectType = new GraphQLObjectType({
     name: fullTypeName(message),
-    fields: () => visitFields(message.fieldsArray, context)
+    fields: () => visitFields(message.fieldsArray, context),
   });
   setType(objectType, context);
   return [
     objectType,
     visitOneOfs(message, context),
     visitMaps(message, context),
-    visitNested(message.nestedArray, context)
+    visitNested(message.nestedArray, context),
   ];
 }
 
@@ -54,12 +54,12 @@ function visitEnum(enm: protobuf.Enum, context: Context) {
     name: fullTypeName(enm),
     values: Object.assign(
       {},
-      ...Object.keys(enm.values).map(key => ({
+      ...Object.keys(enm.values).map((key) => ({
         [key]: {
-          value: enm.values[key].valueOf()
-        }
+          value: enm.values[key].valueOf(),
+        },
       }))
-    )
+    ),
   });
   setType(enumType, context);
   return enumType;
@@ -67,28 +67,31 @@ function visitEnum(enm: protobuf.Enum, context: Context) {
 
 function visitOneOfs(message: protobuf.Type, context: Context) {
   return [
-    ...new Set(message.fieldsArray.map(field => field.partOf).filter(Boolean))
-  ].map(oneOf => visitOneOf(oneOf, context));
+    ...new Set(
+      message.fieldsArray.map((field) => field.partOf).filter(Boolean)
+    ),
+  ].map((oneOf) => visitOneOf(oneOf, context));
 }
 
 function visitOneOf(oneOf: protobuf.OneOf, context: Context) {
   const unionType = new GraphQLUnionType({
     name: fullTypeName(oneOf),
-    types: () => oneOf.fieldsArray.map(field => visitFieldType(field, context))
+    types: () =>
+      oneOf.fieldsArray.map((field) => visitFieldType(field, context)),
   });
   setType(unionType, context);
   return unionType;
 }
 
 function visitMaps(message: protobuf.Type, context: Context) {
-  return message.fieldsArray.map(field => {
+  return message.fieldsArray.map((field) => {
     if (field instanceof protobuf.MapField) {
       field.resolve();
       const objectType = new GraphQLObjectType({
         name: fullTypeName(field),
         fields: () => ({
           key: {
-            type: visitDataType(field.keyType, false, null, context)
+            type: visitDataType(field.keyType, false, null, context),
           },
           value: {
             type: visitDataType(
@@ -96,9 +99,9 @@ function visitMaps(message: protobuf.Type, context: Context) {
               field.repeated,
               () => field.resolvedType,
               context
-            )
-          }
-        })
+            ),
+          },
+        }),
       });
       setType(objectType, context);
       return objectType;
@@ -113,17 +116,17 @@ function visitFields<TSource, TContext, TArgs>(
 ): GraphQLFieldConfigMap<TSource, TContext, TArgs> {
   return Object.assign(
     {},
-    ...fields.map(field =>
+    ...fields.map((field) =>
       field.partOf
         ? {
             [field.partOf.name]: {
-              type: visitOneOf(field.partOf, context)
-            }
+              type: visitOneOf(field.partOf, context),
+            },
           }
         : {
             [field.name]: {
-              type: visitFieldType(field, context)
-            }
+              type: visitFieldType(field, context),
+            },
           }
     )
   );
@@ -141,7 +144,7 @@ function visitFieldType(field: protobuf.Field, context: Context) {
     field.repeated,
     () => field.resolve().resolvedType,
     context,
-    fieldBehaviors,
+    fieldBehaviors
   );
 }
 
@@ -161,7 +164,8 @@ function visitDataType(
     dataType = new GraphQLList(new GraphQLNonNull(dataType));
   }
 
-  const required = fieldBehaviors?.REQUIRED || (scalar && !fieldBehaviors?.OPTIONAL);
+  const required =
+    fieldBehaviors?.REQUIRED || (scalar && !fieldBehaviors?.OPTIONAL);
   if (required) {
     dataType = new GraphQLNonNull(dataType);
   }
@@ -173,7 +177,10 @@ function getFieldBehaviors(field: protobuf.Field) {
   const fieldBehaviors: Record<string, boolean> = {};
 
   // Incorrectly typed
-  const parsedOptions = ((field.parsedOptions as any) ?? []) as Record<string, any>[];
+  const parsedOptions = ((field.parsedOptions as any) ?? []) as Record<
+    string,
+    any
+  >[];
 
   parsedOptions.forEach((options) => {
     Object.entries(options).forEach(([key, value]) => {

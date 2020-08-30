@@ -9,10 +9,7 @@ program
     "-o, --output [path]",
     'path to ".graphql" output, otherwise uses STDOUT'
   )
-  .option(
-    "--include [path]",
-    "path to include directory"
-  )
+  .option("--include [path]", "path to include directory")
   .parse(process.argv);
 
 const schema = convert(program.input, program.include);
