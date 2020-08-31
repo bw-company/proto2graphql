@@ -3,10 +3,10 @@ type User {
 }
 
 type String_Attribute_map {
-  key: String
+  key: String!
   value: Attribute
 }
 
 type Attribute {
-  value: String
+  value: String!
 }

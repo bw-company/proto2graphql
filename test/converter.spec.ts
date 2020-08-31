@@ -1,32 +1,45 @@
 import { convert } from "..";
 import { expect } from "chai";
-import { lstatSync, readdirSync, existsSync, readFileSync } from "fs";
-import { join } from "path";
+import {
+  lstatSync,
+  readdirSync,
+  existsSync,
+  readFileSync,
+  writeFileSync,
+} from "fs";
+import * as path from "path";
 import "mocha";
 
 const DIR = __dirname;
+const includeDir = path.join(DIR, "..", "protos");
+console.log(includeDir);
 
 describe("converter", () => {
-  tests().forEach(test => {
+  tests().forEach((test) => {
     it(`handles ${test.replace(/_/g, " ")}`, () => {
-      const testDir = join(DIR, test);
-      const actual = convert(join(testDir, "input.proto"));
-      const expected = readFileSync(join(testDir, "output.graphql"), "UTF-8");
-      expect(normalize(actual)).equal(normalize(expected));
+      const generateInputTypes = /field_behavior/.test(test);
+
+      const testDir = path.join(DIR, test);
+      const actual = convert(path.join(testDir, "input.proto"), {
+        includeDir,
+        generateInputTypes,
+      });
+      const expected = readFileSync(
+        path.join(testDir, "output.graphql"),
+        "UTF-8"
+      );
+
+      if (process.env.SNAPSHOT_UPDATE) {
+        writeFileSync(path.join(testDir, "output.graphql"), actual);
+      } else {
+        expect(actual).equal(expected);
+      }
     });
   });
 });
 
 function tests() {
   return readdirSync(DIR)
-    .filter(dirent => lstatSync(join(DIR, dirent)).isDirectory())
-    .filter(subdir => existsSync(join(DIR, subdir, "input.proto")));
-}
-
-function normalize(schema: string) {
-  return schema
-    .replace(/\n+/gm, "\n")
-    .replace(/^[ ]+/gm, "  ")
-    .replace(/[\n ]+$/gm, "")
-    .replace(/[ ]+\n/gm, "");
+    .filter((p) => lstatSync(path.join(DIR, p)).isDirectory())
+    .filter((dir) => existsSync(path.join(DIR, dir, "input.proto")));
 }

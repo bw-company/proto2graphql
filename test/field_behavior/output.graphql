@@ -1,0 +1,136 @@
+type TypeA {
+  scalar: String
+  enumValue: EnumA!
+  nonScalar: google_protobuf_StringValue!
+  either: TypeA_either
+  attributes: [String_Attribute_map]
+  fieldA: TypeA_TypeB
+}
+
+input TypeAInput {
+  scalar: String
+  enumValue: EnumA!
+  nonScalar: google_protobuf_StringValueInput!
+  either: TypeA_eitherInput
+  attributes: [String_Attribute_map]
+  fieldA: TypeA_TypeBInput
+}
+
+union TypeA_either = google_protobuf_Int32Value | google_protobuf_StringValue!
+
+input TypeA_eitherInput {
+  int32Value: google_protobuf_Int32ValueInput
+  stringValue: google_protobuf_StringValueInput
+}
+
+type String_Attribute_map {
+  key: String!
+  value: Attribute
+}
+
+input String_Attribute_mapInput {
+  key: String!
+  value: AttributeInput
+}
+
+type TypeA_TypeB {
+  fieldB: Int!
+}
+
+input TypeA_TypeBInput {
+  fieldB: Int!
+}
+
+enum EnumA {
+  ENUM_A_UNSPECIFIED
+}
+
+type Attribute {
+  value: String!
+}
+
+input AttributeInput {
+  value: String!
+}
+
+type TypeC {
+  outputOnly: String!
+  immutable: String!
+}
+
+input TypeCInput {
+  inputOnly: String!
+  immutable: String!
+}
+
+type google_protobuf_DoubleValue {
+  value: Float!
+}
+
+input google_protobuf_DoubleValueInput {
+  value: Float!
+}
+
+type google_protobuf_FloatValue {
+  value: Float!
+}
+
+input google_protobuf_FloatValueInput {
+  value: Float!
+}
+
+type google_protobuf_Int64Value {
+  value: Int!
+}
+
+input google_protobuf_Int64ValueInput {
+  value: Int!
+}
+
+type google_protobuf_UInt64Value {
+  value: Int!
+}
+
+input google_protobuf_UInt64ValueInput {
+  value: Int!
+}
+
+type google_protobuf_Int32Value {
+  value: Int!
+}
+
+input google_protobuf_Int32ValueInput {
+  value: Int!
+}
+
+type google_protobuf_UInt32Value {
+  value: Int!
+}
+
+input google_protobuf_UInt32ValueInput {
+  value: Int!
+}
+
+type google_protobuf_BoolValue {
+  value: Boolean!
+}
+
+input google_protobuf_BoolValueInput {
+  value: Boolean!
+}
+
+type google_protobuf_StringValue {
+  value: String!
+}
+
+input google_protobuf_StringValueInput {
+  value: String!
+}
+
+type google_protobuf_BytesValue {
+  value: String!
+}
+
+input google_protobuf_BytesValueInput {
+  value: String!
+}

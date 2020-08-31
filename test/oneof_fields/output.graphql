@@ -2,12 +2,12 @@ type UserAuth {
   provider: UserAuth_provider
 }
 
-union UserAuth_provider = UserAuth_GoogleProvider | UserAuth_FacebookProvider | String
+union UserAuth_provider = UserAuth_GoogleProvider | UserAuth_FacebookProvider | String!
 
 type UserAuth_GoogleProvider {
-  gid: Int
+  gid: Int!
 }
 
 type UserAuth_FacebookProvider {
-  fbid: String
+  fbid: String!
 }
