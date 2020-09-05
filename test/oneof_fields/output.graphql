@@ -2,7 +2,7 @@ type UserAuth {
   provider: UserAuth_provider
 }
 
-union UserAuth_provider = UserAuth_GoogleProvider | UserAuth_FacebookProvider | String
+union UserAuth_provider = UserAuth_GoogleProvider | UserAuth_FacebookProvider
 
 type UserAuth_GoogleProvider {
   gid: Int!
@@ -10,4 +10,18 @@ type UserAuth_GoogleProvider {
 
 type UserAuth_FacebookProvider {
   fbid: String!
+}
+
+type Redirect {
+  destination: Redirect_destination
+}
+
+type Redirect_destination {
+  namedDestination: Redirect_NamedDestination
+  generic: String
+}
+
+enum Redirect_NamedDestination {
+  HOME
+  ACCOUNT
 }

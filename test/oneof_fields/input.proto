@@ -12,6 +12,17 @@ message UserAuth {
   oneof provider {
     GoogleProvider google = 1;
     FacebookProvider facebook = 2;
-    string generic = 3;
+  }
+}
+
+message Redirect {
+  enum NamedDestination {
+    HOME = 0;
+    ACCOUNT = 1;
+  }
+
+  oneof destination {
+    NamedDestination named_destination = 1;
+    string generic = 2;
   }
 }

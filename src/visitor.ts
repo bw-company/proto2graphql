@@ -11,6 +11,7 @@ import {
   GraphQLInputFieldConfigMap,
   GraphQLInputType,
   GraphQLEnumValueConfigMap,
+  isObjectType,
 } from "graphql";
 import { Context } from "./context";
 import {
@@ -32,21 +33,23 @@ function visitNested(
 ): GraphQLNamedType[] {
   const result: GraphQLNamedType[] = [];
 
-  objects.map((object) => {
-    if (object instanceof protobuf.Type) {
-      return visitMessage(object, context);
-    }
-    if (object instanceof protobuf.Enum) {
-      return [createEnum(object, context)];
-    }
-    if (object instanceof protobuf.Namespace) {
-      return visitNested(object.nestedArray, context);
-    }
-    return null;
-  }).forEach((val) => {
-    if (!val) return;
-    result.push(...val);
-  });
+  objects
+    .map((object) => {
+      if (object instanceof protobuf.Type) {
+        return visitMessage(object, context);
+      }
+      if (object instanceof protobuf.Enum) {
+        return [createEnum(object, context)];
+      }
+      if (object instanceof protobuf.Namespace) {
+        return visitNested(object.nestedArray, context);
+      }
+      return null;
+    })
+    .forEach((val) => {
+      if (!val) return;
+      result.push(...val);
+    });
 
   return result;
 }
@@ -59,7 +62,7 @@ function visitMessage(
 
   const objectType = new GraphQLObjectType({
     name: context.getFullTypeName(message),
-    fields: () => createOutputFields(message.fieldsArray, context),
+    fields: () => createOutputFields(message.fieldsArray, true, context),
   });
   context.setType(objectType);
   result.push(objectType);
@@ -175,19 +178,31 @@ function createEnum(enm: protobuf.Enum, context: Context): GraphQLEnumType {
 function createUnionType(
   oneOf: protobuf.OneOf,
   context: Context
-): GraphQLUnionType {
-  const unionType = new GraphQLUnionType({
-    name: context.getFullTypeName(oneOf),
-    types: () =>
-      oneOf.fieldsArray
-        .map(
-          (field) =>
-            createOutputFieldType(field, context, true) as GraphQLObjectType | null
-        )
-        .filter(Boolean),
-  });
-  context.setType(unionType);
-  return unionType;
+): GraphQLUnionType | GraphQLObjectType {
+  // A union type can only include object types
+  const compatible = oneOf.fieldsArray
+    .map((field) => createOutputFieldType(field, context, true))
+    .every((type) => !type || isObjectType(type));
+
+  if (compatible) {
+    const unionType = new GraphQLUnionType({
+      name: context.getFullTypeName(oneOf),
+      types: () => {
+        return oneOf.fieldsArray
+          .map((field) => createOutputFieldType(field, context, true))
+          .filter(Boolean) as GraphQLObjectType[];
+      },
+    });
+    context.setType(unionType);
+    return unionType;
+  } else {
+    const objectType = new GraphQLObjectType({
+      name: context.getFullTypeName(oneOf),
+      fields: () => createOutputFields(oneOf.fieldsArray, false, context),
+    });
+    context.setType(objectType);
+    return objectType;
+  }
 }
 
 function createInputUnionType(
@@ -204,16 +219,17 @@ function createInputUnionType(
 
 function createOutputFields<TSource, TContext, TArgs>(
   fields: protobuf.Field[],
+  unionTypeEnabled: boolean,
   context: Context
 ): GraphQLFieldConfigMap<TSource, TContext, TArgs> {
   const map: GraphQLFieldConfigMap<TSource, TContext, TArgs> = {};
   fields.forEach((field) => {
-    if (field.partOf) {
+    if (unionTypeEnabled && field.partOf) {
       map[sanitizeFieldName(field.partOf.name)] = {
         type: createUnionType(field.partOf, context),
       };
     } else {
-      const type = createOutputFieldType(field, context);
+      const type = createOutputFieldType(field, context, !unionTypeEnabled);
       if (type) map[sanitizeFieldName(field.name)] = { type };
     }
   });
