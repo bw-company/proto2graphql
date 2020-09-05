@@ -19,6 +19,7 @@ import {
   getFieldBehaviors,
   FieldBehaviors,
   wrapType,
+  sanitizeFieldName,
 } from "./utils";
 
 export function visit(objects: protobuf.ReflectionObject[], context: Context) {
@@ -208,12 +209,12 @@ function createOutputFields<TSource, TContext, TArgs>(
   const map: GraphQLFieldConfigMap<TSource, TContext, TArgs> = {};
   fields.forEach((field) => {
     if (field.partOf) {
-      map[field.partOf.name] = {
+      map[sanitizeFieldName(field.partOf.name)] = {
         type: createUnionType(field.partOf, context),
       };
     } else {
       const type = createOutputFieldType(field, context);
-      if (type) map[field.name] = { type };
+      if (type) map[sanitizeFieldName(field.name)] = { type };
     }
   });
   return map;
@@ -227,12 +228,12 @@ function createInputFields(
   const map: GraphQLInputFieldConfigMap = {};
   fields.forEach((field) => {
     if (unionTypeEnabled && field.partOf) {
-      map[field.partOf.name] = {
+      map[sanitizeFieldName(field.partOf.name)] = {
         type: createInputUnionType(field.partOf, context),
       };
     } else {
       const type = createInputFieldType(field, !unionTypeEnabled, context);
-      if (type) map[field.name] = { type };
+      if (type) map[sanitizeFieldName(field.name)] = { type };
     }
   });
   return map;

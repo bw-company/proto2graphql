@@ -377,7 +377,7 @@ type google_protobuf_FieldOptions {
   deprecated: Boolean!
   weak: Boolean!
   uninterpretedOption: [google_protobuf_UninterpretedOption!]
-  .google.api.fieldBehavior: [google_api_FieldBehavior!]
+  google_api_fieldBehavior: [google_api_FieldBehavior!]
 }
 
 input google_protobuf_FieldOptionsInput {
@@ -388,7 +388,7 @@ input google_protobuf_FieldOptionsInput {
   deprecated: Boolean!
   weak: Boolean!
   uninterpretedOption: [google_protobuf_UninterpretedOptionInput!]
-  .google.api.fieldBehavior: [google_api_FieldBehavior!]
+  google_api_fieldBehavior: [google_api_FieldBehavior!]
 }
 
 enum google_protobuf_FieldOptions_CType {
