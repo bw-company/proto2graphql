@@ -19,20 +19,24 @@ fetch() {
   local dst_dir="${4:-""}"
 
   local zip_path="$CACHE_DIR/$name.zip"
-  local unzip_path="$CACHE_DIR/$src_dir"
+  local unzip_path="$CACHE_DIR/$name/$src_dir"
 
   if [ ! -f "$zip_path" ]; then
-    curl "$url" -o "$zip_path"
+    curl -L "$url" -o "$zip_path"
   fi
   if [ ! -d "$unzip_path" ]; then
     unzip "$zip_path" "*.proto" -d "$CACHE_DIR"
   fi
 
-  cp -R "$unzip_path" "$OUTPUT_DIR/$dst_dir"
+  mkdir -p "$OUTPUT_DIR/$dst_dir"
+  rsync -av "$unzip_path/" "$OUTPUT_DIR/$dst_dir/"
 }
 
 [ -d "$CACHE_DIR" ] || mkdir -p "$CACHE_DIR"
-[ -d "$OUTPUT_DIR" ] || mkdir -p "$OUTPUT_DIR"
+[ -d "$OUTPUT_DIR" ] && rm -rf "$OUTPUT_DIR"
+mkdir -p "$OUTPUT_DIR"
 
-fetch "$PROTOBUF_ZIP" "protobuf-$PROTOBUF_VERSION" "protobuf-$PROTOBUF_VERSION/src/"
-fetch "$GOOGLEAPIS_ZIP" "googleapis-$GOOGLEAPIS_VERSION" "googleapis-$GOOGLEAPIS_VERSION/google/api" "google/api/"
+fetch "$PROTOBUF_ZIP" "protobuf-$PROTOBUF_VERSION" "src/google/protobuf" "google/protobuf"
+fetch "$GOOGLEAPIS_ZIP" "googleapis-$GOOGLEAPIS_VERSION" "google/api" "google/api"
+
+find "$OUTPUT_DIR"
