@@ -1,12 +1,14 @@
 {
   "compilerOptions": {
     "target": "ES5",
+    "outDir": "./dist",
+    "rootDir": "./src",
     "moduleResolution": "node",
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
+    "declaration": true,
     "sourceMap": true,
-    "outDir": "lib",
     "downlevelIteration": true
   },
   "include": ["src/**/*"],

@@ -1,21 +1,22 @@
 {
   "private": true,
-  "name": "proto2graphql",
-  "version": "0.1.2-alpha",
+  "name": "@bw-company/proto2graphql",
+  "version": "0.2.0-alpha",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "description": "Converts schema definitions in Protocol Buffer to GraphQL",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/bw-company/proto2graphql.git"
+  },
   "scripts": {
     "clean": "rm -rf ./protos",
-    "build": "tsc -p .",
+    "build": "tsc",
     "test": "nyc mocha -r ts-node/register **/test/*.spec.ts",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "pull:wkt": "scripts/pull-wkt.sh"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/emzeq/proto2graphql.git"
-  },
-  "author": "Aurelio Agundez",
-  "license": "MIT",
   "dependencies": {
     "graphql": "^14.5.8",
     "protobufjs": "^6.10.1"
