@@ -153,7 +153,14 @@ type google_protobuf_Value {
   kind: google_protobuf_Value_kind
 }
 
-union google_protobuf_Value_kind = google_protobuf_NullValue | Float | String | Boolean | google_protobuf_Struct | google_protobuf_ListValue
+type google_protobuf_Value_kind {
+  nullValue: google_protobuf_NullValue
+  numberValue: Float
+  stringValue: String
+  boolValue: Boolean
+  structValue: google_protobuf_Struct
+  listValue: google_protobuf_ListValue
+}
 
 enum google_protobuf_NullValue {
   NULL_VALUE
