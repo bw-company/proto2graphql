@@ -38,5 +38,3 @@ mkdir -p "$OUTPUT_DIR"
 
 fetch "$PROTOBUF_ZIP" "protobuf-$PROTOBUF_VERSION" "src/google/protobuf" "google/protobuf"
 fetch "$GOOGLEAPIS_ZIP" "googleapis-$GOOGLEAPIS_VERSION" "google/api" "google/api"
-
-find "$OUTPUT_DIR"
