@@ -11,7 +11,7 @@ import * as path from "path";
 import "mocha";
 
 const DIR = __dirname;
-const includeDir = path.join(DIR, "..", "protos");
+const includeDir = path.join(DIR, "..", "tmp/protos-include");
 
 describe("converter", () => {
   tests().forEach((test) => {
