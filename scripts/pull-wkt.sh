@@ -1,19 +1,38 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Pulls protobuf's well-known types from Google's GitHub repo.
+set -eu
+set -o pipefail
 
-SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
+CACHE_DIR="./tmp/protos-include-cache"
+OUTPUT_DIR="./tmp/protos-include"
 
-rm -rf $SCRIPT_PATH/../protos/*
-tmp=$SCRIPT_PATH/.tmp_pull
-git init $tmp
-cd $tmp
-git remote add origin https://github.com/protocolbuffers/protobuf.git
-git config core.sparsecheckout true
-echo "src/google/protobuf/*.proto" >> .git/info/sparse-checkout
-git pull --depth=1 origin master
-cd $SCRIPT_PATH
-mkdir -p $SCRIPT_PATH/../protos/google/protobuf/
-cp -r $tmp/src/google $SCRIPT_PATH/../protos
-rm -rf $SCRIPT_PATH/../protos/google/protobuf/*{test,map_}*
-rm -rf $tmp
+PROTOBUF_VERSION=3.13.0
+GOOGLEAPIS_VERSION=a8c73212a73d460b1edcd0830c4c3e31de33bdc5
+
+PROTOBUF_ZIP=https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_VERSION}/protobuf-js-${PROTOBUF_VERSION}.zip
+GOOGLEAPIS_ZIP=https://github.com/googleapis/googleapis/archive/${GOOGLEAPIS_VERSION}.zip
+
+fetch() {
+  local url="$1"
+  local name="$2"
+  local src_dir="$3"
+  local dst_dir="${4:-""}"
+
+  local zip_path="$CACHE_DIR/$name.zip"
+  local unzip_path="$CACHE_DIR/$src_dir"
+
+  if [ ! -f "$zip_path" ]; then
+    curl "$url" -o "$zip_path"
+  fi
+  if [ ! -d "$unzip_path" ]; then
+    unzip "$zip_path" "*.proto" -d "$CACHE_DIR"
+  fi
+
+  cp -R "$unzip_path" "$OUTPUT_DIR/$dst_dir"
+}
+
+[ -d "$CACHE_DIR" ] || mkdir -p "$CACHE_DIR"
+[ -d "$OUTPUT_DIR" ] || mkdir -p "$OUTPUT_DIR"
+
+fetch "$PROTOBUF_ZIP" "protobuf-$PROTOBUF_VERSION" "protobuf-$PROTOBUF_VERSION/src/"
+fetch "$GOOGLEAPIS_ZIP" "googleapis-$GOOGLEAPIS_VERSION" "googleapis-$GOOGLEAPIS_VERSION/google/api" "google/api/"

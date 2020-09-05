@@ -1,6 +1,6 @@
 src/
 .github/
 scripts/
-protos/
+tmp/
 test/
 tsconfig.json

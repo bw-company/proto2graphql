@@ -30,6 +30,10 @@ const ScalarTypeMap = {
   bytes: GraphQLString,
 };
 
+export function sanitizeFieldName(name: string): string {
+  return name.replace(/\W+/g, "_").replace(/^_/, "").replace(/_$/, "");
+}
+
 export function getFullTypeName(type: protobuf.ReflectionObject): string {
   if (type instanceof protobuf.MapField) {
     const keyType = convertScalar(type.keyType);
