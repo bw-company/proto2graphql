@@ -1,7 +1,6 @@
 {
-  "private": true,
   "name": "@bw-company/proto2graphql",
-  "version": "0.2.0-alpha",
+  "version": "0.2.1-alpha",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Converts schema definitions in Protocol Buffer to GraphQL",

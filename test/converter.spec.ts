@@ -1,4 +1,4 @@
-import { convert } from "..";
+import { convert } from "../src";
 import { expect } from "chai";
 import {
   lstatSync,
@@ -12,7 +12,6 @@ import "mocha";
 
 const DIR = __dirname;
 const includeDir = path.join(DIR, "..", "protos");
-console.log(includeDir);
 
 describe("converter", () => {
   tests().forEach((test) => {
