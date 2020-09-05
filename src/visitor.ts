@@ -181,7 +181,7 @@ function createUnionType(
       oneOf.fieldsArray
         .map(
           (field) =>
-            createOutputFieldType(field, context) as GraphQLObjectType | null
+            createOutputFieldType(field, context, true) as GraphQLObjectType | null
         )
         .filter(Boolean),
   });
@@ -240,10 +240,15 @@ function createInputFields(
 
 function createOutputFieldType(
   field: protobuf.Field,
-  context: Context
+  context: Context,
+  forceNullable?: boolean
 ): GraphQLOutputType | null {
   const fieldBehaviors = getFieldBehaviors(field);
   if (fieldBehaviors.has("INPUT_ONLY")) return null;
+  if (forceNullable) {
+    fieldBehaviors.delete("REQUIRED");
+    fieldBehaviors.add("OPTIONAL");
+  }
 
   if (field instanceof protobuf.MapField) {
     return new GraphQLList(context.getType(context.getFullTypeName(field)));
