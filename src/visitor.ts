@@ -47,6 +47,7 @@ function visitNested(
       return null;
     })
     .forEach((val) => {
+      if (!val) return;
       result.push(...val);
     });
 
@@ -306,6 +307,7 @@ async function createOutputFieldType(
   }
 
   if (field instanceof protobuf.MapField) {
+    field.resolve();
     return new GraphQLList(await context.getType(context.getFullTypeName(field)));
   }
 
