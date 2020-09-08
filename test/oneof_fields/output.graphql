@@ -2,7 +2,10 @@ type UserAuth {
   provider: UserAuth_provider
 }
 
-union UserAuth_provider = UserAuth_GoogleProvider | UserAuth_FacebookProvider
+type UserAuth_provider {
+  google: UserAuth_GoogleProvider
+  facebook: UserAuth_FacebookProvider
+}
 
 type UserAuth_GoogleProvider {
   gid: Int!
@@ -22,7 +25,10 @@ type Redirect_destination {
   generic: String
 }
 
-union Redirect_destination_2 = ExternalEnum | ExternalMessage
+type Redirect_destination_2 {
+  externalEnum: ExternalEnum
+  externalMessage: ExternalMessage
+}
 
 enum Redirect_NamedDestination {
   HOME

@@ -179,30 +179,31 @@ function createUnionType(
   oneOf: protobuf.OneOf,
   context: Context
 ): GraphQLUnionType | GraphQLObjectType {
+  // FIXME: This doesn't work. Needs deferred evaluation.
   // A union type can only include object types
-  const compatible = oneOf.fieldsArray
-    .map((field) => createOutputFieldType(field, context, true))
-    .every((type) => !type || isObjectType(type));
+  // const compatible = oneOf.fieldsArray
+  //   .map((field) => createOutputFieldType(field, context, true))
+  //   .every((type) => !type || isObjectType(type));
+  //
+  // if (compatible) {
+  //   const unionType = new GraphQLUnionType({
+  //     name: context.getFullTypeName(oneOf),
+  //     types: () => {
+  //       return oneOf.fieldsArray
+  //         .map((field) => createOutputFieldType(field, context, true))
+  //         .filter(Boolean) as GraphQLObjectType[];
+  //     },
+  //   });
+  //   context.setType(unionType);
+  //   return unionType;
+  // }
 
-  if (compatible) {
-    const unionType = new GraphQLUnionType({
-      name: context.getFullTypeName(oneOf),
-      types: () => {
-        return oneOf.fieldsArray
-          .map((field) => createOutputFieldType(field, context, true))
-          .filter(Boolean) as GraphQLObjectType[];
-      },
-    });
-    context.setType(unionType);
-    return unionType;
-  } else {
-    const objectType = new GraphQLObjectType({
-      name: context.getFullTypeName(oneOf),
-      fields: () => createOutputFields(oneOf.fieldsArray, false, context),
-    });
-    context.setType(objectType);
-    return objectType;
-  }
+  const objectType = new GraphQLObjectType({
+    name: context.getFullTypeName(oneOf),
+    fields: () => createOutputFields(oneOf.fieldsArray, false, context),
+  });
+  context.setType(objectType);
+  return objectType;
 }
 
 function createInputUnionType(
