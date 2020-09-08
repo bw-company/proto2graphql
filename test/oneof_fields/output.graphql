@@ -14,6 +14,7 @@ type UserAuth_FacebookProvider {
 
 type Redirect {
   destination: Redirect_destination
+  destination_2: Redirect_destination_2
 }
 
 type Redirect_destination {
@@ -21,7 +22,17 @@ type Redirect_destination {
   generic: String
 }
 
+union Redirect_destination_2 = ExternalEnum | ExternalMessage
+
 enum Redirect_NamedDestination {
   HOME
   ACCOUNT
+}
+
+enum ExternalEnum {
+  UNSPECIFIED
+}
+
+type ExternalMessage {
+  foo: String!
 }
