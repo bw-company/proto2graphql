@@ -54,6 +54,7 @@ export class Context {
 
 interface Deferred<T> {
   promise: Promise<T>;
+  state: "pending" | "resolved" | "rejected";
   resolve(value?: T | PromiseLike<T>): void;
   reject(reason: any): void;
 }
@@ -66,9 +67,21 @@ function createDeferred<T>(): Deferred<T> {
     fn.reject = reject;
   });
 
+  let state: "pending" | "resolved" | "rejected" = "pending";
   return {
     promise,
-    resolve: fn.resolve as any,
-    reject: fn.reject as any,
+    get state() {
+      return state;
+    },
+    resolve(value) {
+      if (state !== "pending") return;
+      state = "resolved";
+      fn.resolve?.(value);
+    },
+    reject(reason) {
+      if (state !== "pending") return;
+      state = "rejected";
+      fn.reject?.(reason);
+    }
   };
 }
