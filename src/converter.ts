@@ -6,13 +6,13 @@ import { visit } from "./visitor";
 import { Context } from "./context";
 import { ConvertOptions } from "./options";
 
-export function convert(filename: string, options?: ConvertOptions) {
+export async function convert(filename: string, options?: ConvertOptions) {
   const root = new Root();
   root.resolvePath = resolverFactory(root.resolvePath, options?.includeDir);
   root.loadSync(filename);
 
   const context = new Context(options);
-  const types = visit(root.nestedArray, context);
+  const types = await visit(root.nestedArray, context);
   return types.map((type) => printType(type)).join("\n\n") + "\n";
 }
 

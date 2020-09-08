@@ -15,11 +15,11 @@ const includeDir = path.join(DIR, "..", "tmp/protos-include");
 
 describe("converter", () => {
   tests().forEach((test) => {
-    it(`handles ${test.replace(/_/g, " ")}`, () => {
+    it(`handles ${test.replace(/_/g, " ")}`, async () => {
       const generateInputTypes = /field_behavior/.test(test);
 
       const testDir = path.join(DIR, test);
-      const actual = convert(path.join(testDir, "input.proto"), {
+      const actual = await convert(path.join(testDir, "input.proto"), {
         includeDir,
         generateInputTypes,
       });
