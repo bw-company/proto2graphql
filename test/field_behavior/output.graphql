@@ -16,7 +16,10 @@ input TypeAInput {
   fieldA: TypeA_TypeBInput
 }
 
-union TypeA_either = google_protobuf_Int32Value | google_protobuf_StringValue
+type TypeA_either {
+  int32Value: google_protobuf_Int32Value
+  stringValue: google_protobuf_StringValue
+}
 
 input TypeA_eitherInput {
   int32Value: google_protobuf_Int32ValueInput

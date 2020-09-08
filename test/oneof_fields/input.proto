@@ -1,6 +1,13 @@
 syntax = "proto3";
 
+import "./external.proto";
+
 message UserAuth {
+  oneof provider {
+    GoogleProvider google = 1;
+    FacebookProvider facebook = 2;
+  }
+
   message GoogleProvider {
     int32 gid = 1;
   }
@@ -8,21 +15,21 @@ message UserAuth {
   message FacebookProvider {
     string fbid = 1;
   }
-
-  oneof provider {
-    GoogleProvider google = 1;
-    FacebookProvider facebook = 2;
-  }
 }
 
 message Redirect {
-  enum NamedDestination {
-    HOME = 0;
-    ACCOUNT = 1;
-  }
-
   oneof destination {
     NamedDestination named_destination = 1;
     string generic = 2;
+  }
+
+  oneof destination_2 {
+    ExternalEnum external_enum = 3;
+    ExternalMessage external_message = 4;
+  }
+
+  enum NamedDestination {
+    HOME = 0;
+    ACCOUNT = 1;
   }
 }
