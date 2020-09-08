@@ -14,13 +14,23 @@ export class Context {
     this.inputTypeNameSuffix = options?.inputTypeNameSuffix ?? "Input";
     this.transformTypeName = options?.transformTypeName ?? ((v) => v);
     this.deferred = {};
+
+    setTimeout(() => {
+      console.log("Context.deferred {");
+      Object.entries(this.deferred).forEach(([key, value]) => {
+        console.log("  ", key, ":", value.state);
+      });
+      console.log("}");
+    }, 1000);
   }
 
   private getDeferred(name: string): Deferred<GraphQLNamedType> {
     if (this.deferred[name]) {
+      console.log("---- get(cache):", name);
       return this.deferred[name];
     }
 
+    console.log("---- get(new):", name);
     const newDeferred = createDeferred<GraphQLNamedType>();
     this.deferred[name] = newDeferred;
     return newDeferred;
@@ -28,6 +38,7 @@ export class Context {
 
   public setType(type: GraphQLNamedType) {
     const deferred = this.getDeferred(type.name);
+    console.log("---- resolve:", type.name);
     deferred.resolve(type);
   }
 
@@ -37,6 +48,7 @@ export class Context {
 
   public setInput(type: GraphQLNamedType) {
     const deferred = this.getDeferred(type.name);
+    console.log("---- resolve:", type.name);
     deferred.resolve(type);
   }
 
