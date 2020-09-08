@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+OUTPUT_DIR="./tmp/protos-include"
+CACHE_DIR="./tmp/protos-include-cache"
+
+PROTOBUF_VERSION=3.13.0
+GOOGLEAPIS_VERSION=a8c73212a73d460b1edcd0830c4c3e31de33bdc5
+
+PROTOBUF_ZIP=https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_VERSION}/protobuf-js-${PROTOBUF_VERSION}.zip
+GOOGLEAPIS_ZIP=https://github.com/googleapis/googleapis/archive/${GOOGLEAPIS_VERSION}.zip
+
+fetch() {
+  local url="$1"
+  local name="$2"
+
+  local zip_path="$CACHE_DIR/$name.zip"
+  local unzip_path="$CACHE_DIR/$name"
+
+  [ -f "$zip_path" ] || curl -L "$url" -o "$zip_path"
+  [ -d "$unzip_path" ] || unzip "$zip_path" "*.proto" -d "$CACHE_DIR"
+
+  for pair in "${@:3}"; do
+    local src_dir="$unzip_path/${pair%%:*}"
+    local dst_dir="$OUTPUT_DIR/${pair#*:}"
+
+    [ -d "$dst_dir" ] && rm -rf "$dst_dir"
+    mkdir -p "$dst_dir"
+
+    rsync -av "$src_dir/" "$dst_dir/"
+  done
+}
+
+[ -d "$CACHE_DIR" ] || mkdir -p "$CACHE_DIR"
+
+fetch "$PROTOBUF_ZIP" "protobuf-$PROTOBUF_VERSION" \
+  "src/google/protobuf:google/protobuf"
+fetch "$GOOGLEAPIS_ZIP" "googleapis-$GOOGLEAPIS_VERSION" \
+  "google/api:google/api" \
+  "google/type:google/type"
