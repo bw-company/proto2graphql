@@ -11,7 +11,6 @@ import {
   GraphQLInputFieldConfigMap,
   GraphQLInputType,
   GraphQLEnumValueConfigMap,
-  isObjectType,
 } from "graphql";
 import { Context } from "./context";
 import {
@@ -60,16 +59,20 @@ function visitMessage(
 ): GraphQLNamedType[] {
   const result: GraphQLNamedType[] = [];
 
-  const objectType = new GraphQLObjectType({
-    name: context.getFullTypeName(message),
-    fields: () => createOutputFields(message.fieldsArray, true, context),
-  });
-  context.setType(objectType);
-  result.push(objectType);
+  const fullName = context.getFullTypeName(message);
 
-  if (context.generateInputTypes) {
+  if (!context.skipType(fullName)) {
+    const objectType = new GraphQLObjectType({
+      name: fullName,
+      fields: () => createOutputFields(message.fieldsArray, true, context),
+    });
+    context.setType(objectType);
+    result.push(objectType);
+  }
+
+  if (context.generateInputTypes && !context.skipInput(fullName)) {
     const inputType = new GraphQLInputObjectType({
-      name: context.getFullTypeName(message) + context.inputTypeNameSuffix,
+      name: fullName + context.inputTypeNameSuffix,
       fields: () => createInputFields(message.fieldsArray, true, context),
     });
     context.setInput(inputType);
