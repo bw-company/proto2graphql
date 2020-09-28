@@ -38,7 +38,11 @@ export class Context {
     return this.inputs[name] ?? this.inputs[name + this.inputTypeNameSuffix];
   }
 
-  public getFullTypeName(type: protobuf.ReflectionObject): string {
-    return this.transformTypeName(getFullTypeName(type));
+  public getFullTypeName(type: protobuf.ReflectionObject): { original: string; name: string } {
+    const fullName = getFullTypeName(type);
+    return {
+      name: this.transformTypeName(fullName),
+      original: fullName,
+    };
   }
 }
