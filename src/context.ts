@@ -2,6 +2,8 @@ import { GraphQLOutputType, GraphQLNamedType, GraphQLInputType } from "graphql";
 import { ConvertOptions } from "./options";
 import { getFullTypeName } from "./utils";
 
+const GEN_OPTION_PROTO_PATTERN = /^proto2graphql_/;
+
 export class Context {
   private types: { [name: string]: GraphQLOutputType };
   private inputs: { [name: string]: GraphQLInputType };
@@ -9,15 +11,15 @@ export class Context {
   public readonly generateInputTypes: boolean;
   public readonly inputTypeNameSuffix: string;
   private transformTypeName: (fullName: string) => string;
-  public skipType: (fullName: string) => boolean;
-  public skipInput: (fullName: string) => boolean;
+  private _skipType?: (fullName: string) => boolean;
+  private _skipInput?: (fullName: string) => boolean;
 
   constructor(options?: ConvertOptions) {
     this.generateInputTypes = options?.generateInputTypes ?? false;
     this.inputTypeNameSuffix = options?.inputTypeNameSuffix ?? "Input";
     this.transformTypeName = options?.transformTypeName ?? ((v) => v);
-    this.skipType = options?.skipType ?? (() => false);
-    this.skipInput = options?.skipInput ?? (() => false);
+    this._skipType = options?.skipType;
+    this._skipInput = options?.skipInput;
     this.types = {};
     this.inputs = {};
   }
@@ -44,5 +46,17 @@ export class Context {
       name: this.transformTypeName(fullName),
       original: fullName,
     };
+  }
+
+  public skipType(fullName: string): boolean {
+    if (this._skipType?.(fullName)) return true;
+    if (fullName.match(GEN_OPTION_PROTO_PATTERN)) return true;
+    return false;
+  }
+
+  public skipInput(fullName: string): boolean {
+    if (this._skipInput?.(fullName)) return true;
+    if (fullName.match(GEN_OPTION_PROTO_PATTERN)) return true;
+    return false;
   }
 }

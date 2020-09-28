@@ -6,12 +6,12 @@ import { visit } from "./visitor";
 import { Context } from "./context";
 import { ConvertOptions } from "./options";
 
-const PROTO_DIR = path.join(__dirname, "..", "proto");
+const GEN_OPTION_PROTO_DIR = path.join(__dirname, "..", "proto");
 
 export function convert(filename: string, options?: ConvertOptions) {
   const includeDirs: string[] = [];
   if (options?.includeDir) includeDirs.push(options.includeDir);
-  includeDirs.push(PROTO_DIR);
+  includeDirs.push(GEN_OPTION_PROTO_DIR);
 
   const root = new Root();
   root.resolvePath = resolverFactory(root.resolvePath, includeDirs);

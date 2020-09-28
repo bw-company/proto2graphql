@@ -6,16 +6,6 @@ input TypeAInput {
   skipOnType: String!
 }
 
-type proto2graphql_Option {
-  skipOnType: Boolean!
-  skipOnInput: Boolean!
-}
-
-input proto2graphql_OptionInput {
-  skipOnType: Boolean!
-  skipOnInput: Boolean!
-}
-
 type google_protobuf_FileDescriptorSet {
   file: [google_protobuf_FileDescriptorProto!]
 }
@@ -321,7 +311,6 @@ type google_protobuf_FieldOptions {
   deprecated: Boolean!
   weak: Boolean!
   uninterpretedOption: [google_protobuf_UninterpretedOption!]
-  proto2graphql_option: proto2graphql_Option
 }
 
 input google_protobuf_FieldOptionsInput {
@@ -332,7 +321,6 @@ input google_protobuf_FieldOptionsInput {
   deprecated: Boolean!
   weak: Boolean!
   uninterpretedOption: [google_protobuf_UninterpretedOptionInput!]
-  proto2graphql_option: proto2graphql_OptionInput
 }
 
 enum google_protobuf_FieldOptions_CType {
