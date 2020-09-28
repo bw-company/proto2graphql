@@ -6,9 +6,15 @@ import { visit } from "./visitor";
 import { Context } from "./context";
 import { ConvertOptions } from "./options";
 
+const PROTO_DIR = path.join(__dirname, "..", "proto");
+
 export function convert(filename: string, options?: ConvertOptions) {
+  const includeDirs: string[] = [];
+  if (options?.includeDir) includeDirs.push(options.includeDir);
+  includeDirs.push(PROTO_DIR);
+
   const root = new Root();
-  root.resolvePath = resolverFactory(root.resolvePath, options?.includeDir);
+  root.resolvePath = resolverFactory(root.resolvePath, includeDirs);
   root.loadSync(filename);
 
   const context = new Context(options);
@@ -19,7 +25,7 @@ export function convert(filename: string, options?: ConvertOptions) {
 type Resolver = (origin: string, target: string) => string;
 function resolverFactory(
   defaultResolver: Resolver,
-  includeDir?: string
+  includeDirs: string[]
 ): Resolver {
   const resolvedPaths: Record<string, string> = {};
 
@@ -27,8 +33,8 @@ function resolverFactory(
     const cacheKey = `${origin}:${target}`;
     if (!resolvedPaths[cacheKey]) {
       resolvedPaths[cacheKey] = (() => {
-        if (includeDir) {
-          const includePath = path.join(includeDir, target);
+        for (const dir of includeDirs) {
+          const includePath = path.join(dir, target);
           if (existsSync(includePath)) {
             return includePath;
           }

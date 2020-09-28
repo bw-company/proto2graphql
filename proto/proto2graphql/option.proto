@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package proto2graphql;
+
+option java_multiple_files = true;
+option java_outer_classname = "Proto2GraphQLProto";
+option java_package = "proto2graphql";
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.FieldOptions {
+  proto2graphql.Option option = 2121;
+}
+
+message Option {
+  bool skip_on_type = 1;
+  bool skip_on_input = 2;
+}
