@@ -1,13 +1,9 @@
 type TypeA {
-  skipOnType: String!
   skipOnInput: String!
-  skipOnTypeAndInput: String!
 }
 
 input TypeAInput {
   skipOnType: String!
-  skipOnInput: String!
-  skipOnTypeAndInput: String!
 }
 
 type proto2graphql_Option {

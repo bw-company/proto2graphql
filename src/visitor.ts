@@ -20,6 +20,7 @@ import {
   FieldBehaviors,
   wrapType,
   sanitizeFieldName,
+  getGenerateOption,
 } from "./utils";
 
 export function visit(objects: protobuf.ReflectionObject[], context: Context) {
@@ -273,6 +274,9 @@ function createOutputFieldType(
     fieldBehaviors.add("OPTIONAL");
   }
 
+  const genOption = getGenerateOption(field);
+  if (genOption.skipOnType) return null;
+
   if (field instanceof protobuf.MapField) {
     return new GraphQLList(context.getType(context.getFullTypeName(field).name));
   }
@@ -293,6 +297,9 @@ function createInputFieldType(
 ): GraphQLInputType | null {
   const fieldBehaviors = getFieldBehaviors(field);
   if (fieldBehaviors.has("OUTPUT_ONLY")) return null;
+
+  const genOption = getGenerateOption(field);
+  if (genOption.skipOnInput) return null;
 
   if (field instanceof protobuf.MapField) {
     return new GraphQLList(context.getType(context.getFullTypeName(field).name));
