@@ -3,7 +3,7 @@ syntax = "proto3";
 import "proto2graphql/option.proto";
 
 message TypeA {
-  string skipOnType = 1 [ proto2graphql.option.skipOnType = true ];
-  string skipOnInput = 2 [ proto2graphql.option.skipOnInput = true ];
-  string skipOnTypeAndInput = 3 [ proto2graphql.option.skipOnType = true, proto2graphql.option.skipOnInput = true ];
+  string skipOnType = 1 [ proto2graphql.option.skip_on_type = true ];
+  string skipOnInput = 2 [ proto2graphql.option.skip_on_input = true ];
+  string skipOnTypeAndInput = 3 [ proto2graphql.option.skip_on_type = true, proto2graphql.option.skip_on_input = true ];
 }
