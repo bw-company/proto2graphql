@@ -11,7 +11,6 @@ import {
   GraphQLInputFieldConfigMap,
   GraphQLInputType,
   GraphQLEnumValueConfigMap,
-  isObjectType,
 } from "graphql";
 import { Context } from "./context";
 import {
@@ -21,6 +20,7 @@ import {
   FieldBehaviors,
   wrapType,
   sanitizeFieldName,
+  getGenerateOption,
 } from "./utils";
 
 export function visit(objects: protobuf.ReflectionObject[], context: Context) {
@@ -60,16 +60,20 @@ function visitMessage(
 ): GraphQLNamedType[] {
   const result: GraphQLNamedType[] = [];
 
-  const objectType = new GraphQLObjectType({
-    name: context.getFullTypeName(message),
-    fields: () => createOutputFields(message.fieldsArray, true, context),
-  });
-  context.setType(objectType);
-  result.push(objectType);
+  const fullName = context.getFullTypeName(message);
 
-  if (context.generateInputTypes) {
+  if (!context.skipType(fullName.original)) {
+    const objectType = new GraphQLObjectType({
+      name: fullName.name,
+      fields: () => createOutputFields(message.fieldsArray, true, context),
+    });
+    context.setType(objectType);
+    result.push(objectType);
+  }
+
+  if (context.generateInputTypes && !context.skipInput(fullName.original)) {
     const inputType = new GraphQLInputObjectType({
-      name: context.getFullTypeName(message) + context.inputTypeNameSuffix,
+      name: fullName.name + context.inputTypeNameSuffix,
       fields: () => createInputFields(message.fieldsArray, true, context),
     });
     context.setInput(inputType);
@@ -114,8 +118,10 @@ function visitMaps(
 
     field.resolve();
 
+    const fullName = context.getFullTypeName(field);
+
     const objectType = new GraphQLObjectType({
-      name: context.getFullTypeName(field),
+      name: fullName.name,
       fields: () => ({
         key: {
           type: createOutputDataType(field.keyType, false, null, context),
@@ -135,7 +141,7 @@ function visitMaps(
 
     if (context.generateInputTypes) {
       const inputType = new GraphQLInputObjectType({
-        name: context.getFullTypeName(field) + context.inputTypeNameSuffix,
+        name: fullName.name + context.inputTypeNameSuffix,
         fields: () => ({
           key: {
             type: createInputDataType(field.keyType, false, null, context),
@@ -167,7 +173,7 @@ function createEnum(enm: protobuf.Enum, context: Context): GraphQLEnumType {
   });
 
   const enumType = new GraphQLEnumType({
-    name: context.getFullTypeName(enm),
+    name: context.getFullTypeName(enm).name,
     values,
   });
   context.setType(enumType);
@@ -187,7 +193,7 @@ function createUnionType(
   //
   // if (compatible) {
   //   const unionType = new GraphQLUnionType({
-  //     name: context.getFullTypeName(oneOf),
+  //     name: context.getFullTypeName(oneOf).nme,
   //     types: () => {
   //       return oneOf.fieldsArray
   //         .map((field) => createOutputFieldType(field, context, true))
@@ -199,7 +205,7 @@ function createUnionType(
   // }
 
   const objectType = new GraphQLObjectType({
-    name: context.getFullTypeName(oneOf),
+    name: context.getFullTypeName(oneOf).name,
     fields: () => createOutputFields(oneOf.fieldsArray, false, context),
   });
   context.setType(objectType);
@@ -211,7 +217,7 @@ function createInputUnionType(
   context: Context
 ): GraphQLInputObjectType {
   const inputType = new GraphQLInputObjectType({
-    name: context.getFullTypeName(oneOf) + context.inputTypeNameSuffix,
+    name: context.getFullTypeName(oneOf).name + context.inputTypeNameSuffix,
     fields: () => createInputFields(oneOf.fieldsArray, false, context),
   });
   context.setInput(inputType);
@@ -268,8 +274,11 @@ function createOutputFieldType(
     fieldBehaviors.add("OPTIONAL");
   }
 
+  const genOption = getGenerateOption(field);
+  if (genOption.skipOnType) return null;
+
   if (field instanceof protobuf.MapField) {
-    return new GraphQLList(context.getType(context.getFullTypeName(field)));
+    return new GraphQLList(context.getType(context.getFullTypeName(field).name));
   }
 
   return createOutputDataType(
@@ -289,8 +298,11 @@ function createInputFieldType(
   const fieldBehaviors = getFieldBehaviors(field);
   if (fieldBehaviors.has("OUTPUT_ONLY")) return null;
 
+  const genOption = getGenerateOption(field);
+  if (genOption.skipOnInput) return null;
+
   if (field instanceof protobuf.MapField) {
-    return new GraphQLList(context.getType(context.getFullTypeName(field)));
+    return new GraphQLList(context.getType(context.getFullTypeName(field).name));
   }
 
   if (forceNullable) {
@@ -316,7 +328,7 @@ function createOutputDataType(
 ): GraphQLOutputType {
   const dataType = isScalar(type)
     ? convertScalar(type)
-    : context.getType(context.getFullTypeName(resolver()));
+    : context.getType(context.getFullTypeName(resolver()).name);
   return wrapType(dataType, repeated, fieldBehaviors);
 }
 
@@ -329,6 +341,6 @@ function createInputDataType(
 ): GraphQLInputType | null {
   const dataType = isScalar(type)
     ? convertScalar(type)
-    : context.getInput(context.getFullTypeName(resolver()));
+    : context.getInput(context.getFullTypeName(resolver()).name);
   return dataType ? wrapType(dataType, repeated, fieldBehaviors) : null;
 }

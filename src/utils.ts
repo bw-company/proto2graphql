@@ -77,6 +77,17 @@ export function getFieldBehaviors(field: protobuf.Field): FieldBehaviors {
   return fieldBehaviors;
 }
 
+export interface GenerateOption {
+  skipOnType: boolean;
+  skipOnInput: boolean;
+}
+export function getGenerateOption(field: protobuf.Field): GenerateOption {
+  return {
+    skipOnType: !!field.options?.["proto2graphql.option.skipOnType"],
+    skipOnInput: !!field.options?.["proto2graphql.option.skipOnInput"],
+  };
+}
+
 export function wrapType<T extends GraphQLType>(
   type: T,
   repeated: boolean,

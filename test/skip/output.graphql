@@ -1,0 +1,470 @@
+type TypeA {
+  skipOnInput: String!
+}
+
+input TypeAInput {
+  skipOnType: String!
+}
+
+type google_protobuf_FileDescriptorSet {
+  file: [google_protobuf_FileDescriptorProto!]
+}
+
+input google_protobuf_FileDescriptorSetInput {
+  file: [google_protobuf_FileDescriptorProtoInput!]
+}
+
+type google_protobuf_FileDescriptorProto {
+  name: String!
+  package: String!
+  dependency: [String!]
+  publicDependency: [Int!]
+  weakDependency: [Int!]
+  messageType: [google_protobuf_DescriptorProto!]
+  enumType: [google_protobuf_EnumDescriptorProto!]
+  service: [google_protobuf_ServiceDescriptorProto!]
+  extension: [google_protobuf_FieldDescriptorProto!]
+  options: google_protobuf_FileOptions
+  sourceCodeInfo: google_protobuf_SourceCodeInfo
+  syntax: String!
+}
+
+input google_protobuf_FileDescriptorProtoInput {
+  name: String!
+  package: String!
+  dependency: [String!]
+  publicDependency: [Int!]
+  weakDependency: [Int!]
+  messageType: [google_protobuf_DescriptorProtoInput!]
+  enumType: [google_protobuf_EnumDescriptorProtoInput!]
+  service: [google_protobuf_ServiceDescriptorProtoInput!]
+  extension: [google_protobuf_FieldDescriptorProtoInput!]
+  options: google_protobuf_FileOptionsInput
+  sourceCodeInfo: google_protobuf_SourceCodeInfoInput
+  syntax: String!
+}
+
+type google_protobuf_DescriptorProto {
+  name: String!
+  field: [google_protobuf_FieldDescriptorProto!]
+  extension: [google_protobuf_FieldDescriptorProto!]
+  nestedType: [google_protobuf_DescriptorProto!]
+  enumType: [google_protobuf_EnumDescriptorProto!]
+  extensionRange: [google_protobuf_DescriptorProto_ExtensionRange!]
+  oneofDecl: [google_protobuf_OneofDescriptorProto!]
+  options: google_protobuf_MessageOptions
+  reservedRange: [google_protobuf_DescriptorProto_ReservedRange!]
+  reservedName: [String!]
+}
+
+input google_protobuf_DescriptorProtoInput {
+  name: String!
+  field: [google_protobuf_FieldDescriptorProtoInput!]
+  extension: [google_protobuf_FieldDescriptorProtoInput!]
+  nestedType: [google_protobuf_DescriptorProtoInput!]
+  enumType: [google_protobuf_EnumDescriptorProtoInput!]
+  extensionRange: [google_protobuf_DescriptorProto_ExtensionRangeInput!]
+  oneofDecl: [google_protobuf_OneofDescriptorProtoInput!]
+  options: google_protobuf_MessageOptionsInput
+  reservedRange: [google_protobuf_DescriptorProto_ReservedRangeInput!]
+  reservedName: [String!]
+}
+
+type google_protobuf_DescriptorProto_ExtensionRange {
+  start: Int!
+  end: Int!
+  options: google_protobuf_ExtensionRangeOptions
+}
+
+input google_protobuf_DescriptorProto_ExtensionRangeInput {
+  start: Int!
+  end: Int!
+  options: google_protobuf_ExtensionRangeOptionsInput
+}
+
+type google_protobuf_DescriptorProto_ReservedRange {
+  start: Int!
+  end: Int!
+}
+
+input google_protobuf_DescriptorProto_ReservedRangeInput {
+  start: Int!
+  end: Int!
+}
+
+type google_protobuf_ExtensionRangeOptions {
+  uninterpretedOption: [google_protobuf_UninterpretedOption!]
+}
+
+input google_protobuf_ExtensionRangeOptionsInput {
+  uninterpretedOption: [google_protobuf_UninterpretedOptionInput!]
+}
+
+type google_protobuf_FieldDescriptorProto {
+  name: String!
+  number: Int!
+  label: google_protobuf_FieldDescriptorProto_Label!
+  type: google_protobuf_FieldDescriptorProto_Type!
+  typeName: String!
+  extendee: String!
+  defaultValue: String!
+  oneofIndex: Int!
+  jsonName: String!
+  options: google_protobuf_FieldOptions
+  proto3Optional: Boolean!
+}
+
+input google_protobuf_FieldDescriptorProtoInput {
+  name: String!
+  number: Int!
+  label: google_protobuf_FieldDescriptorProto_Label!
+  type: google_protobuf_FieldDescriptorProto_Type!
+  typeName: String!
+  extendee: String!
+  defaultValue: String!
+  oneofIndex: Int!
+  jsonName: String!
+  options: google_protobuf_FieldOptionsInput
+  proto3Optional: Boolean!
+}
+
+enum google_protobuf_FieldDescriptorProto_Type {
+  TYPE_DOUBLE
+  TYPE_FLOAT
+  TYPE_INT64
+  TYPE_UINT64
+  TYPE_INT32
+  TYPE_FIXED64
+  TYPE_FIXED32
+  TYPE_BOOL
+  TYPE_STRING
+  TYPE_GROUP
+  TYPE_MESSAGE
+  TYPE_BYTES
+  TYPE_UINT32
+  TYPE_ENUM
+  TYPE_SFIXED32
+  TYPE_SFIXED64
+  TYPE_SINT32
+  TYPE_SINT64
+}
+
+enum google_protobuf_FieldDescriptorProto_Label {
+  LABEL_OPTIONAL
+  LABEL_REQUIRED
+  LABEL_REPEATED
+}
+
+type google_protobuf_OneofDescriptorProto {
+  name: String!
+  options: google_protobuf_OneofOptions
+}
+
+input google_protobuf_OneofDescriptorProtoInput {
+  name: String!
+  options: google_protobuf_OneofOptionsInput
+}
+
+type google_protobuf_EnumDescriptorProto {
+  name: String!
+  value: [google_protobuf_EnumValueDescriptorProto!]
+  options: google_protobuf_EnumOptions
+  reservedRange: [google_protobuf_EnumDescriptorProto_EnumReservedRange!]
+  reservedName: [String!]
+}
+
+input google_protobuf_EnumDescriptorProtoInput {
+  name: String!
+  value: [google_protobuf_EnumValueDescriptorProtoInput!]
+  options: google_protobuf_EnumOptionsInput
+  reservedRange: [google_protobuf_EnumDescriptorProto_EnumReservedRangeInput!]
+  reservedName: [String!]
+}
+
+type google_protobuf_EnumDescriptorProto_EnumReservedRange {
+  start: Int!
+  end: Int!
+}
+
+input google_protobuf_EnumDescriptorProto_EnumReservedRangeInput {
+  start: Int!
+  end: Int!
+}
+
+type google_protobuf_EnumValueDescriptorProto {
+  name: String!
+  number: Int!
+  options: google_protobuf_EnumValueOptions
+}
+
+input google_protobuf_EnumValueDescriptorProtoInput {
+  name: String!
+  number: Int!
+  options: google_protobuf_EnumValueOptionsInput
+}
+
+type google_protobuf_ServiceDescriptorProto {
+  name: String!
+  method: [google_protobuf_MethodDescriptorProto!]
+  options: google_protobuf_ServiceOptions
+}
+
+input google_protobuf_ServiceDescriptorProtoInput {
+  name: String!
+  method: [google_protobuf_MethodDescriptorProtoInput!]
+  options: google_protobuf_ServiceOptionsInput
+}
+
+type google_protobuf_MethodDescriptorProto {
+  name: String!
+  inputType: String!
+  outputType: String!
+  options: google_protobuf_MethodOptions
+  clientStreaming: Boolean!
+  serverStreaming: Boolean!
+}
+
+input google_protobuf_MethodDescriptorProtoInput {
+  name: String!
+  inputType: String!
+  outputType: String!
+  options: google_protobuf_MethodOptionsInput
+  clientStreaming: Boolean!
+  serverStreaming: Boolean!
+}
+
+type google_protobuf_FileOptions {
+  javaPackage: String!
+  javaOuterClassname: String!
+  javaMultipleFiles: Boolean!
+  javaGenerateEqualsAndHash: Boolean!
+  javaStringCheckUtf8: Boolean!
+  optimizeFor: google_protobuf_FileOptions_OptimizeMode!
+  goPackage: String!
+  ccGenericServices: Boolean!
+  javaGenericServices: Boolean!
+  pyGenericServices: Boolean!
+  phpGenericServices: Boolean!
+  deprecated: Boolean!
+  ccEnableArenas: Boolean!
+  objcClassPrefix: String!
+  csharpNamespace: String!
+  swiftPrefix: String!
+  phpClassPrefix: String!
+  phpNamespace: String!
+  phpMetadataNamespace: String!
+  rubyPackage: String!
+  uninterpretedOption: [google_protobuf_UninterpretedOption!]
+}
+
+input google_protobuf_FileOptionsInput {
+  javaPackage: String!
+  javaOuterClassname: String!
+  javaMultipleFiles: Boolean!
+  javaGenerateEqualsAndHash: Boolean!
+  javaStringCheckUtf8: Boolean!
+  optimizeFor: google_protobuf_FileOptions_OptimizeMode!
+  goPackage: String!
+  ccGenericServices: Boolean!
+  javaGenericServices: Boolean!
+  pyGenericServices: Boolean!
+  phpGenericServices: Boolean!
+  deprecated: Boolean!
+  ccEnableArenas: Boolean!
+  objcClassPrefix: String!
+  csharpNamespace: String!
+  swiftPrefix: String!
+  phpClassPrefix: String!
+  phpNamespace: String!
+  phpMetadataNamespace: String!
+  rubyPackage: String!
+  uninterpretedOption: [google_protobuf_UninterpretedOptionInput!]
+}
+
+enum google_protobuf_FileOptions_OptimizeMode {
+  SPEED
+  CODE_SIZE
+  LITE_RUNTIME
+}
+
+type google_protobuf_MessageOptions {
+  messageSetWireFormat: Boolean!
+  noStandardDescriptorAccessor: Boolean!
+  deprecated: Boolean!
+  mapEntry: Boolean!
+  uninterpretedOption: [google_protobuf_UninterpretedOption!]
+}
+
+input google_protobuf_MessageOptionsInput {
+  messageSetWireFormat: Boolean!
+  noStandardDescriptorAccessor: Boolean!
+  deprecated: Boolean!
+  mapEntry: Boolean!
+  uninterpretedOption: [google_protobuf_UninterpretedOptionInput!]
+}
+
+type google_protobuf_FieldOptions {
+  ctype: google_protobuf_FieldOptions_CType!
+  packed: Boolean!
+  jstype: google_protobuf_FieldOptions_JSType!
+  lazy: Boolean!
+  deprecated: Boolean!
+  weak: Boolean!
+  uninterpretedOption: [google_protobuf_UninterpretedOption!]
+}
+
+input google_protobuf_FieldOptionsInput {
+  ctype: google_protobuf_FieldOptions_CType!
+  packed: Boolean!
+  jstype: google_protobuf_FieldOptions_JSType!
+  lazy: Boolean!
+  deprecated: Boolean!
+  weak: Boolean!
+  uninterpretedOption: [google_protobuf_UninterpretedOptionInput!]
+}
+
+enum google_protobuf_FieldOptions_CType {
+  STRING
+  CORD
+  STRING_PIECE
+}
+
+enum google_protobuf_FieldOptions_JSType {
+  JS_NORMAL
+  JS_STRING
+  JS_NUMBER
+}
+
+type google_protobuf_OneofOptions {
+  uninterpretedOption: [google_protobuf_UninterpretedOption!]
+}
+
+input google_protobuf_OneofOptionsInput {
+  uninterpretedOption: [google_protobuf_UninterpretedOptionInput!]
+}
+
+type google_protobuf_EnumOptions {
+  allowAlias: Boolean!
+  deprecated: Boolean!
+  uninterpretedOption: [google_protobuf_UninterpretedOption!]
+}
+
+input google_protobuf_EnumOptionsInput {
+  allowAlias: Boolean!
+  deprecated: Boolean!
+  uninterpretedOption: [google_protobuf_UninterpretedOptionInput!]
+}
+
+type google_protobuf_EnumValueOptions {
+  deprecated: Boolean!
+  uninterpretedOption: [google_protobuf_UninterpretedOption!]
+}
+
+input google_protobuf_EnumValueOptionsInput {
+  deprecated: Boolean!
+  uninterpretedOption: [google_protobuf_UninterpretedOptionInput!]
+}
+
+type google_protobuf_ServiceOptions {
+  deprecated: Boolean!
+  uninterpretedOption: [google_protobuf_UninterpretedOption!]
+}
+
+input google_protobuf_ServiceOptionsInput {
+  deprecated: Boolean!
+  uninterpretedOption: [google_protobuf_UninterpretedOptionInput!]
+}
+
+type google_protobuf_MethodOptions {
+  deprecated: Boolean!
+  idempotencyLevel: google_protobuf_MethodOptions_IdempotencyLevel!
+  uninterpretedOption: [google_protobuf_UninterpretedOption!]
+}
+
+input google_protobuf_MethodOptionsInput {
+  deprecated: Boolean!
+  idempotencyLevel: google_protobuf_MethodOptions_IdempotencyLevel!
+  uninterpretedOption: [google_protobuf_UninterpretedOptionInput!]
+}
+
+enum google_protobuf_MethodOptions_IdempotencyLevel {
+  IDEMPOTENCY_UNKNOWN
+  NO_SIDE_EFFECTS
+  IDEMPOTENT
+}
+
+type google_protobuf_UninterpretedOption {
+  name: [google_protobuf_UninterpretedOption_NamePart!]
+  identifierValue: String!
+  positiveIntValue: Int!
+  negativeIntValue: Int!
+  doubleValue: Float!
+  stringValue: String!
+  aggregateValue: String!
+}
+
+input google_protobuf_UninterpretedOptionInput {
+  name: [google_protobuf_UninterpretedOption_NamePartInput!]
+  identifierValue: String!
+  positiveIntValue: Int!
+  negativeIntValue: Int!
+  doubleValue: Float!
+  stringValue: String!
+  aggregateValue: String!
+}
+
+type google_protobuf_UninterpretedOption_NamePart {
+  namePart: String!
+  isExtension: Boolean!
+}
+
+input google_protobuf_UninterpretedOption_NamePartInput {
+  namePart: String!
+  isExtension: Boolean!
+}
+
+type google_protobuf_SourceCodeInfo {
+  location: [google_protobuf_SourceCodeInfo_Location!]
+}
+
+input google_protobuf_SourceCodeInfoInput {
+  location: [google_protobuf_SourceCodeInfo_LocationInput!]
+}
+
+type google_protobuf_SourceCodeInfo_Location {
+  path: [Int!]
+  span: [Int!]
+  leadingComments: String!
+  trailingComments: String!
+  leadingDetachedComments: [String!]
+}
+
+input google_protobuf_SourceCodeInfo_LocationInput {
+  path: [Int!]
+  span: [Int!]
+  leadingComments: String!
+  trailingComments: String!
+  leadingDetachedComments: [String!]
+}
+
+type google_protobuf_GeneratedCodeInfo {
+  annotation: [google_protobuf_GeneratedCodeInfo_Annotation!]
+}
+
+input google_protobuf_GeneratedCodeInfoInput {
+  annotation: [google_protobuf_GeneratedCodeInfo_AnnotationInput!]
+}
+
+type google_protobuf_GeneratedCodeInfo_Annotation {
+  path: [Int!]
+  sourceFile: String!
+  begin: Int!
+  end: Int!
+}
+
+input google_protobuf_GeneratedCodeInfo_AnnotationInput {
+  path: [Int!]
+  sourceFile: String!
+  begin: Int!
+  end: Int!
+}
