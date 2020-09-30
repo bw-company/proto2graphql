@@ -83,8 +83,8 @@ export interface GenerateOption {
 }
 export function getGenerateOption(field: protobuf.Field): GenerateOption {
   return {
-    skipOnType: !!field.options?.["proto2graphql.option.skip_on_type"],
-    skipOnInput: !!field.options?.["proto2graphql.option.skip_on_input"],
+    skipOnType: !!field.options?.["(proto2graphql.option).skip_on_type"],
+    skipOnInput: !!field.options?.["(proto2graphql.option).skip_on_input"],
   };
 }
 
