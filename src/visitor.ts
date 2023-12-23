@@ -305,7 +305,7 @@ function createInputFieldType(
     return new GraphQLList(context.getType(context.getFullTypeName(field).name));
   }
 
-  if (forceNullable) {
+  if (forceNullable || genOption.optionalOverrideEnabled) {
     fieldBehaviors.delete("REQUIRED");
     fieldBehaviors.add("OPTIONAL");
   }
