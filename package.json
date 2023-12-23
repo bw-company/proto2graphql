@@ -1,6 +1,6 @@
 {
   "name": "@bw-company/proto2graphql",
-  "version": "0.2.7-alpha",
+  "version": "0.2.9-alpha",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Converts schema definitions in Protocol Buffer to GraphQL",

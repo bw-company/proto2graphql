@@ -15,4 +15,5 @@ extend google.protobuf.FieldOptions {
 message Option {
   bool skip_on_type = 1;
   bool skip_on_input = 2;
+  bool optional_override_enabled = 3;
 }

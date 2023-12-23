@@ -80,11 +80,13 @@ export function getFieldBehaviors(field: protobuf.Field): FieldBehaviors {
 export interface GenerateOption {
   skipOnType: boolean;
   skipOnInput: boolean;
+  optionalOverrideEnabled: boolean;
 }
 export function getGenerateOption(field: protobuf.Field): GenerateOption {
   return {
     skipOnType: !!field.options?.["(proto2graphql.option).skip_on_type"],
     skipOnInput: !!field.options?.["(proto2graphql.option).skip_on_input"],
+    optionalOverrideEnabled: !!field.options?.["(proto2graphql.option).optional_override_enabled"],
   };
 }
 
