@@ -3,15 +3,15 @@ type ScalarTypes {
   fieldB: Float!
   fieldC: Float!
   fieldD: Int!
-  fieldE: Int!
+  fieldE: String!
   fieldF: Int!
-  fieldG: Int!
+  fieldG: String!
   fieldH: Int!
-  fieldI: Int!
+  fieldI: String!
   fieldJ: Int!
-  fieldK: Int!
+  fieldK: String!
   fieldL: Int!
-  fieldM: Int!
+  fieldM: String!
   fieldN: Boolean!
   fieldO: String!
 }

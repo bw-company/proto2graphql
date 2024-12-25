@@ -16,15 +16,15 @@ const ScalarTypeMap = {
   double: GraphQLFloat,
   float: GraphQLFloat,
   int32: GraphQLInt,
-  int64: GraphQLInt,
+  int64: GraphQLString,
   uint32: GraphQLInt,
-  uint64: GraphQLInt,
+  uint64: GraphQLString,
   sint32: GraphQLInt,
-  sint64: GraphQLInt,
+  sint64: GraphQLString,
   fixed32: GraphQLInt,
-  fixed64: GraphQLInt,
+  fixed64: GraphQLString,
   sfixed32: GraphQLInt,
-  sfixed64: GraphQLInt,
+  sfixed64: GraphQLString,
   bool: GraphQLBoolean,
   string: GraphQLString,
   bytes: GraphQLString,
@@ -86,7 +86,8 @@ export function getGenerateOption(field: protobuf.Field): GenerateOption {
   return {
     skipOnType: !!field.options?.["(proto2graphql.option).skip_on_type"],
     skipOnInput: !!field.options?.["(proto2graphql.option).skip_on_input"],
-    optionalOverrideEnabled: !!field.options?.["(proto2graphql.option).optional_override_enabled"],
+    optionalOverrideEnabled:
+      !!field.options?.["(proto2graphql.option).optional_override_enabled"],
   };
 }
 

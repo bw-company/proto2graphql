@@ -184,11 +184,11 @@ type google_protobuf_FloatValue {
 }
 
 type google_protobuf_Int64Value {
-  value: Int!
+  value: String!
 }
 
 type google_protobuf_UInt64Value {
-  value: Int!
+  value: String!
 }
 
 type google_protobuf_Int32Value {
