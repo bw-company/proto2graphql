@@ -36,9 +36,11 @@ function visitNested(
   objects
     .map((object) => {
       if (object instanceof protobuf.Type) {
+        if (context.skipFile(object.filename)) return null;
         return visitMessage(object, context);
       }
       if (object instanceof protobuf.Enum) {
+        if (context.skipFile(object.filename)) return null;
         return [createEnum(object, context)];
       }
       if (object instanceof protobuf.Namespace) {

@@ -13,6 +13,7 @@ export class Context {
   private transformTypeName: (fullName: string) => string;
   private _skipType?: (fullName: string) => boolean;
   private _skipInput?: (fullName: string) => boolean;
+  private _skipFile?: (filename: string) => boolean;
 
   constructor(options?: ConvertOptions) {
     this.generateInputTypes = options?.generateInputTypes ?? false;
@@ -20,6 +21,7 @@ export class Context {
     this.transformTypeName = options?.transformTypeName ?? ((v) => v);
     this._skipType = options?.skipType;
     this._skipInput = options?.skipInput;
+    this._skipFile = options?.skipFile;
     this.types = {};
     this.inputs = {};
   }
@@ -58,5 +60,9 @@ export class Context {
     if (this._skipInput?.(fullName)) return true;
     if (fullName.match(GEN_OPTION_PROTO_PATTERN)) return true;
     return false;
+  }
+
+  public skipFile(filename: string | null): boolean {
+    return !!filename && !!this._skipFile?.(filename);
   }
 }
