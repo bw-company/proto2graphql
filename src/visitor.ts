@@ -11,6 +11,7 @@ import {
   GraphQLInputFieldConfigMap,
   GraphQLInputType,
   GraphQLEnumValueConfigMap,
+  GraphQLBoolean,
 } from "graphql";
 import { Context } from "./context";
 import {
@@ -67,7 +68,11 @@ function visitMessage(
   if (!context.skipType(fullName.original)) {
     const objectType = new GraphQLObjectType({
       name: fullName.name,
-      fields: () => createOutputFields(message.fieldsArray, true, context),
+      fields: () =>
+        withEmptyTypeField(
+          createOutputFields(message.fieldsArray, true, context),
+          context
+        ),
     });
     context.setType(objectType);
     result.push(objectType);
@@ -76,7 +81,11 @@ function visitMessage(
   if (context.generateInputTypes && !context.skipInput(fullName.original)) {
     const inputType = new GraphQLInputObjectType({
       name: fullName.name + context.inputTypeNameSuffix,
-      fields: () => createInputFields(message.fieldsArray, true, context),
+      fields: () =>
+        withEmptyTypeField(
+          createInputFields(message.fieldsArray, true, context),
+          context
+        ),
     });
     context.setInput(inputType);
     result.push(inputType);
@@ -208,7 +217,11 @@ function createUnionType(
 
   const objectType = new GraphQLObjectType({
     name: context.getFullTypeName(oneOf).name,
-    fields: () => createOutputFields(oneOf.fieldsArray, false, context),
+    fields: () =>
+      withEmptyTypeField(
+        createOutputFields(oneOf.fieldsArray, false, context),
+        context
+      ),
   });
   context.setType(objectType);
   return objectType;
@@ -220,7 +233,11 @@ function createInputUnionType(
 ): GraphQLInputObjectType {
   const inputType = new GraphQLInputObjectType({
     name: context.getFullTypeName(oneOf).name + context.inputTypeNameSuffix,
-    fields: () => createInputFields(oneOf.fieldsArray, false, context),
+    fields: () =>
+      withEmptyTypeField(
+        createInputFields(oneOf.fieldsArray, false, context),
+        context
+      ),
   });
   context.setInput(inputType);
   return inputType;
@@ -345,4 +362,12 @@ function createInputDataType(
     ? convertScalar(type)
     : context.getInput(context.getFullTypeName(resolver()).name);
   return dataType ? wrapType(dataType, repeated, fieldBehaviors) : null;
+}
+
+// GraphQL does not allow a type without fields, so give it a placeholder when one is configured
+function withEmptyTypeField<
+  T extends GraphQLFieldConfigMap<unknown, unknown> | GraphQLInputFieldConfigMap
+>(fields: T, context: Context): T {
+  if (!context.emptyTypeField || Object.keys(fields).length > 0) return fields;
+  return { [context.emptyTypeField]: { type: GraphQLBoolean } } as T;
 }

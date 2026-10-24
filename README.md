@@ -21,6 +21,7 @@ const sdl = convert("path/to/service.proto", {
 | `includeDir` | A single directory, searched after `includeDirs` |
 | `generateInputTypes` | Also generate an `input` type for each message. Default `false` |
 | `inputTypeNameSuffix` | Suffix of generated input type names. Default `"Input"` |
+| `emptyTypeField` | Name of a nullable `Boolean` field added to object and input types that would otherwise have no fields, which GraphQL does not allow. Unset by default |
 | `transformTypeName(fullName)` | Returns the name to use for a generated type |
 | `skipType(fullName)` | Return `true` to leave out a type. Receives the name before `transformTypeName` |
 | `skipInput(fullName)` | Return `true` to leave out an input type. Receives the name before `transformTypeName` |

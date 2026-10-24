@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+message Empty {}
+
+message Holder {
+  Empty empty = 1;
+  oneof choice {
+    Empty first = 2;
+    Empty second = 3;
+  }
+}

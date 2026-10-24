@@ -1,0 +1,27 @@
+type Empty {
+  _void: Boolean
+}
+
+input EmptyInput {
+  _void: Boolean
+}
+
+type Holder {
+  empty: Empty
+  choice: Holder_choice
+}
+
+input HolderInput {
+  empty: EmptyInput
+  choice: Holder_choiceInput
+}
+
+type Holder_choice {
+  first: Empty
+  second: Empty
+}
+
+input Holder_choiceInput {
+  first: EmptyInput
+  second: EmptyInput
+}
