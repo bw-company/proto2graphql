@@ -1,0 +1,7 @@
+type multiple_FromA {
+  value: String!
+}
+
+type multiple_FromB {
+  a: multiple_FromA
+}

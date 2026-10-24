@@ -8,14 +8,14 @@ import { ConvertOptions } from "./options";
 
 const GEN_OPTION_PROTO_DIR = path.join(__dirname, "..", "proto");
 
-export function convert(filename: string, options?: ConvertOptions) {
+export function convert(files: string | string[], options?: ConvertOptions) {
   const includeDirs: string[] = [...(options?.includeDirs ?? [])];
   if (options?.includeDir) includeDirs.push(options.includeDir);
   includeDirs.push(GEN_OPTION_PROTO_DIR);
 
   const root = new Root();
   root.resolvePath = resolverFactory(root.resolvePath, includeDirs);
-  root.loadSync(filename);
+  root.loadSync(files);
 
   const context = new Context(options);
   const types = visit(root.nestedArray, context);
