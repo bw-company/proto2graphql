@@ -3,6 +3,7 @@ export interface ConvertOptions {
   includeDirs?: string[];
   generateInputTypes?: boolean;
   inputTypeNameSuffix?: string;
+  emptyTypeField?: string;
   transformTypeName?(fullName: string): string;
   skipType?(fullName: string): boolean;
   skipInput?(fullName: string): boolean;

@@ -10,6 +10,7 @@ export class Context {
 
   public readonly generateInputTypes: boolean;
   public readonly inputTypeNameSuffix: string;
+  public readonly emptyTypeField?: string;
   private transformTypeName: (fullName: string) => string;
   private _skipType?: (fullName: string) => boolean;
   private _skipInput?: (fullName: string) => boolean;
@@ -18,6 +19,7 @@ export class Context {
   constructor(options?: ConvertOptions) {
     this.generateInputTypes = options?.generateInputTypes ?? false;
     this.inputTypeNameSuffix = options?.inputTypeNameSuffix ?? "Input";
+    this.emptyTypeField = options?.emptyTypeField;
     this.transformTypeName = options?.transformTypeName ?? ((v) => v);
     this._skipType = options?.skipType;
     this._skipInput = options?.skipInput;
