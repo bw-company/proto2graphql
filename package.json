@@ -1,13 +1,34 @@
 {
   "name": "@bw-company/proto2graphql",
   "version": "0.2.9-alpha",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "proto"
+  ],
   "description": "Converts schema definitions in Protocol Buffer to GraphQL",
   "license": "MIT",
   "packageManager": "pnpm@12.14.0",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
+  },
+  "engines": {
+    "node": ">=22"
   },
   "repository": {
     "type": "git",
@@ -15,9 +36,10 @@
   },
   "scripts": {
     "clean": "rm -rf ./protos",
-    "build": "tsc",
+    "build": "tsdown",
     "test": "vitest run",
-    "pull:google-proto": "scripts/pull-google-proto"
+    "pull:google-proto": "scripts/pull-google-proto",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "graphql": "^16.14.2",
@@ -25,6 +47,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.19.2",
+    "tsdown": "^0.23.1",
     "typescript": "^7.0.2",
     "vitest": "^5.0.5"
   }

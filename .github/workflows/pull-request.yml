@@ -22,4 +22,5 @@ jobs:
           require-lockfile: true
       - run: pnpm pull:google-proto
       - run: pnpm test
+      - run: pnpm typecheck
       - run: pnpm build
