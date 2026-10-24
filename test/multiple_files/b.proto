@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package multiple;
+
+import "a.proto";
+
+message FromB {
+  FromA a = 1;
+}

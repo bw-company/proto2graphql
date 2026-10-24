@@ -13,7 +13,7 @@ const sdl = convert("path/to/service.proto", {
 });
 ```
 
-`convert` returns the GraphQL SDL as a string.
+`convert` takes one `.proto` file or an array of files as entry points, loads what they import, and returns the GraphQL SDL as a string.
 
 | Option | Description |
 | --- | --- |

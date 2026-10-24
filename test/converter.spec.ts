@@ -23,13 +23,17 @@ describe("converter", () => {
         generateInputTypes,
         ...(await loadOptions(testDir)),
       });
-      const snapshot = path.join(testDir, "output.graphql");
-      if (process.env.SNAPSHOT_UPDATE) {
-        writeFileSync(snapshot, actual);
-      } else {
-        expect(actual).toBe(readFileSync(snapshot, "utf-8"));
-      }
+      compareSnapshot(testDir, actual);
     });
+  });
+
+  it("accepts several entry files", () => {
+    const testDir = path.join(DIR, "multiple_files");
+    const actual = convert(
+      [path.join(testDir, "a.proto"), path.join(testDir, "b.proto")],
+      { includeDir }
+    );
+    compareSnapshot(testDir, actual);
   });
 });
 
@@ -44,4 +48,13 @@ async function loadOptions(testDir: string): Promise<ConvertOptions> {
   const file = path.join(testDir, "options.ts");
   if (!existsSync(file)) return {};
   return (await import(file)).default;
+}
+
+function compareSnapshot(testDir: string, actual: string) {
+  const snapshot = path.join(testDir, "output.graphql");
+  if (process.env.SNAPSHOT_UPDATE) {
+    writeFileSync(snapshot, actual);
+  } else {
+    expect(actual).toBe(readFileSync(snapshot, "utf-8"));
+  }
 }
