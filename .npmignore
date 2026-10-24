@@ -5,4 +5,3 @@ tmp/
 test/
 tsconfig.json
 pnpm-workspace.yaml
-vitest.config.mts
