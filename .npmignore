@@ -1,7 +1,0 @@
-src/
-.github/
-scripts/
-tmp/
-test/
-tsconfig.json
-pnpm-workspace.yaml
