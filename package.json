@@ -5,6 +5,10 @@
   "types": "dist/index.d.ts",
   "description": "Converts schema definitions in Protocol Buffer to GraphQL",
   "license": "MIT",
+  "packageManager": "pnpm@12.14.0",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/bw-company/proto2graphql.git"
@@ -23,6 +27,7 @@
     "@types/chai": "^4.2.7",
     "@types/graphql": "^14.5.0",
     "@types/mocha": "^5.2.7",
+    "@types/node": "^14.18.63",
     "chai": "^4.2.0",
     "mocha": "^6.2.2",
     "ts-node": "^8.5.4",
