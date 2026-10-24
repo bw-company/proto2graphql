@@ -1,0 +1,37 @@
+name: Dependency submission
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  dependency-submission:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # pnpm 12 writes pnpm-lock.yaml as two YAML documents, and GitHub's own parser reads only the
+      # first one (pnpm itself). Submit the tree from the lockfile instead, without installing anything.
+      - name: Submit pnpm dependencies
+        uses: anchore/sbom-action@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
+        with:
+          file: pnpm-lock.yaml
+          # Includes the fix that reads every document of a pnpm-lock.yaml stream
+          # https://github.com/anchore/syft/pull/5188
+          syft-version: v1.55.0
+          format: spdx-json
+          dependency-snapshot: true
+          upload-artifact: false
+          upload-release-assets: false
