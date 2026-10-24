@@ -1,0 +1,12 @@
+type IncludeDirs {
+  dup: Dup
+  second: OnlyInSecond
+}
+
+type Dup {
+  fromFirst: String!
+}
+
+type OnlyInSecond {
+  value: String!
+}

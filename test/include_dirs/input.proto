@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+import "shared/dup.proto";
+import "second/only_in_second.proto";
+
+message IncludeDirs {
+  Dup dup = 1;
+  OnlyInSecond second = 2;
+}
