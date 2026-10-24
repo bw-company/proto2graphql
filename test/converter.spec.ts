@@ -1,5 +1,5 @@
 import { convert } from "../src";
-import { expect } from "chai";
+import { describe, expect, it } from "vitest";
 import {
   lstatSync,
   readdirSync,
@@ -8,7 +8,6 @@ import {
   writeFileSync,
 } from "fs";
 import * as path from "path";
-import "mocha";
 
 const DIR = __dirname;
 const includeDir = path.join(DIR, "..", "tmp/protos-include");
@@ -31,7 +30,7 @@ describe("converter", () => {
       if (process.env.SNAPSHOT_UPDATE) {
         writeFileSync(path.join(testDir, "output.graphql"), actual);
       } else {
-        expect(actual).equal(expected);
+        expect(actual).toBe(expected);
       }
     });
   });

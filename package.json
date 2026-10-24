@@ -16,7 +16,7 @@
   "scripts": {
     "clean": "rm -rf ./protos",
     "build": "tsc",
-    "test": "mocha -r ts-node/register **/test/*.spec.ts",
+    "test": "vitest run",
     "pull:google-proto": "scripts/pull-google-proto"
   },
   "dependencies": {
@@ -24,13 +24,8 @@
     "protobufjs": "^6.11.4"
   },
   "devDependencies": {
-    "@types/chai": "^4.2.7",
-    "@types/graphql": "^14.5.0",
-    "@types/mocha": "^5.2.7",
-    "@types/node": "^14.18.63",
-    "chai": "^4.2.0",
-    "mocha": "^6.2.2",
-    "ts-node": "^8.5.4",
-    "typescript": "^3.7.4"
+    "@types/node": "^24.19.2",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
   }
 }
