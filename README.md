@@ -2,6 +2,29 @@
 
 Converts schema definitions in Protocol Buffer (proto3) to GraphQL. Can be used to help generate a GraphQL API gateway to gRPC backend services.
 
+## Usage
+
+```ts
+import { convert } from "@bw-company/proto2graphql";
+
+const sdl = convert("path/to/service.proto", {
+  includeDirs: ["path/to/protos", "path/to/google/protos"],
+  generateInputTypes: true,
+});
+```
+
+`convert` returns the GraphQL SDL as a string.
+
+| Option | Description |
+| --- | --- |
+| `includeDirs` | Directories searched in this order to resolve `import` statements. The package's own `proto/` directory, which defines `proto2graphql.option`, is searched last |
+| `includeDir` | A single directory, searched after `includeDirs` |
+| `generateInputTypes` | Also generate an `input` type for each message. Default `false` |
+| `inputTypeNameSuffix` | Suffix of generated input type names. Default `"Input"` |
+| `transformTypeName(fullName)` | Returns the name to use for a generated type |
+| `skipType(fullName)` | Return `true` to leave out a type. Receives the name before `transformTypeName` |
+| `skipInput(fullName)` | Return `true` to leave out an input type. Receives the name before `transformTypeName` |
+
 ## Conversions
 
 ### Messages

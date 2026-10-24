@@ -9,7 +9,7 @@ import { ConvertOptions } from "./options";
 const GEN_OPTION_PROTO_DIR = path.join(__dirname, "..", "proto");
 
 export function convert(filename: string, options?: ConvertOptions) {
-  const includeDirs: string[] = [];
+  const includeDirs: string[] = [...(options?.includeDirs ?? [])];
   if (options?.includeDir) includeDirs.push(options.includeDir);
   includeDirs.push(GEN_OPTION_PROTO_DIR);
 
