@@ -1,0 +1,7 @@
+type Flagged {
+  value: String!
+}
+
+input FlaggedInput {
+  value: String!
+}

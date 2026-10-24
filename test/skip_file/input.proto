@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.MessageOptions {
+  bool flagged = 50001;
+}
+
+message Flagged {
+  option (flagged) = true;
+  string value = 1;
+}

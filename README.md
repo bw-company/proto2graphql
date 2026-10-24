@@ -24,6 +24,7 @@ const sdl = convert("path/to/service.proto", {
 | `transformTypeName(fullName)` | Returns the name to use for a generated type |
 | `skipType(fullName)` | Return `true` to leave out a type. Receives the name before `transformTypeName` |
 | `skipInput(fullName)` | Return `true` to leave out an input type. Receives the name before `transformTypeName` |
+| `skipFile(filename)` | Return `true` to leave out every type and enum defined in that `.proto` file, for example `google/protobuf/descriptor.proto` imported only for custom options |
 
 ## Conversions
 
