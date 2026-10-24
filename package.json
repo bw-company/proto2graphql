@@ -20,7 +20,7 @@
     "pull:google-proto": "scripts/pull-google-proto"
   },
   "dependencies": {
-    "graphql": "^14.5.8",
+    "graphql": "^16.14.2",
     "protobufjs": "^6.11.4"
   },
   "devDependencies": {

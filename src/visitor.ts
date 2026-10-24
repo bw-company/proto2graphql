@@ -224,12 +224,12 @@ function createInputUnionType(
   return inputType;
 }
 
-function createOutputFields<TSource, TContext, TArgs>(
+function createOutputFields<TSource, TContext>(
   fields: protobuf.Field[],
   unionTypeEnabled: boolean,
   context: Context
-): GraphQLFieldConfigMap<TSource, TContext, TArgs> {
-  const map: GraphQLFieldConfigMap<TSource, TContext, TArgs> = {};
+): GraphQLFieldConfigMap<TSource, TContext> {
+  const map: GraphQLFieldConfigMap<TSource, TContext> = {};
   fields.forEach((field) => {
     if (unionTypeEnabled && field.partOf) {
       map[sanitizeFieldName(field.partOf.name)] = {
