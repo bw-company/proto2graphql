@@ -4,9 +4,16 @@ import { getFullTypeName } from "./utils";
 
 const GEN_OPTION_PROTO_PATTERN = /^proto2graphql_/;
 
+interface FullTypeName {
+  original: string;
+  name: string;
+}
+
 export class Context {
   private types: { [name: string]: GraphQLOutputType };
   private inputs: { [name: string]: GraphQLInputType };
+  // Every field reference asks for the name of its type again, and transformTypeName is user code
+  private fullTypeNames = new WeakMap<protobuf.ReflectionObject, FullTypeName>();
 
   public readonly generateInputTypes: boolean;
   public readonly inputTypeNameSuffix: string;
@@ -44,12 +51,14 @@ export class Context {
     return this.inputs[name] ?? this.inputs[name + this.inputTypeNameSuffix];
   }
 
-  public getFullTypeName(type: protobuf.ReflectionObject): { original: string; name: string } {
-    const fullName = getFullTypeName(type);
-    return {
-      name: this.transformTypeName(fullName),
-      original: fullName,
-    };
+  public getFullTypeName(type: protobuf.ReflectionObject): FullTypeName {
+    let cached = this.fullTypeNames.get(type);
+    if (!cached) {
+      const fullName = getFullTypeName(type);
+      cached = { name: this.transformTypeName(fullName), original: fullName };
+      this.fullTypeNames.set(type, cached);
+    }
+    return cached;
   }
 
   public skipType(fullName: string): boolean {

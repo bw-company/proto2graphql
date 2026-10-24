@@ -18,6 +18,7 @@ import {
   convertScalar,
   isScalar,
   getFieldBehaviors,
+  asOptional,
   FieldBehaviors,
   wrapType,
   sanitizeFieldName,
@@ -25,44 +26,34 @@ import {
 } from "./utils";
 
 export function visit(objects: protobuf.ReflectionObject[], context: Context) {
-  return visitNested(objects, context);
+  const result: GraphQLNamedType[] = [];
+  visitNested(objects, context, result);
+  return result;
 }
 
 function visitNested(
   objects: protobuf.ReflectionObject[],
-  context: Context
-): GraphQLNamedType[] {
-  const result: GraphQLNamedType[] = [];
-
-  objects
-    .map((object) => {
-      if (object instanceof protobuf.Type) {
-        if (context.skipFile(object.filename)) return null;
-        return visitMessage(object, context);
-      }
-      if (object instanceof protobuf.Enum) {
-        if (context.skipFile(object.filename)) return null;
-        return [createEnum(object, context)];
-      }
-      if (object instanceof protobuf.Namespace) {
-        return visitNested(object.nestedArray, context);
-      }
-      return null;
-    })
-    .forEach((val) => {
-      if (!val) return;
-      result.push(...val);
-    });
-
-  return result;
+  context: Context,
+  result: GraphQLNamedType[]
+) {
+  for (const object of objects) {
+    if (object instanceof protobuf.Type) {
+      if (context.skipFile(object.filename)) continue;
+      visitMessage(object, context, result);
+    } else if (object instanceof protobuf.Enum) {
+      if (context.skipFile(object.filename)) continue;
+      result.push(createEnum(object, context));
+    } else if (object instanceof protobuf.Namespace) {
+      visitNested(object.nestedArray, context, result);
+    }
+  }
 }
 
 function visitMessage(
   message: protobuf.Type,
-  context: Context
-): GraphQLNamedType[] {
-  const result: GraphQLNamedType[] = [];
-
+  context: Context,
+  result: GraphQLNamedType[]
+) {
   const fullName = context.getFullTypeName(message);
 
   if (!context.skipType(fullName.original)) {
@@ -91,39 +82,35 @@ function visitMessage(
     result.push(inputType);
   }
 
-  result.push(
-    ...visitOneOfs(message, context),
-    ...visitMaps(message, context),
-    ...visitNested(message.nestedArray, context)
-  );
-
-  return result;
+  visitOneOfs(message, context, result);
+  visitMaps(message, context, result);
+  visitNested(message.nestedArray, context, result);
 }
 
 function visitOneOfs(
   message: protobuf.Type,
-  context: Context
-): GraphQLNamedType[] {
-  const result: GraphQLNamedType[] = [];
-
-  new Set(
-    message.fieldsArray.map((field) => field.partOf).filter(Boolean)
-  ).forEach((oneOf) => {
+  context: Context,
+  result: GraphQLNamedType[]
+) {
+  let seen: Set<protobuf.OneOf> | undefined;
+  for (const field of message.fieldsArray) {
+    const oneOf = field.partOf;
+    if (!oneOf) continue;
+    if (!seen) seen = new Set();
+    if (seen.has(oneOf)) continue;
+    seen.add(oneOf);
     result.push(createUnionType(oneOf, context));
     if (context.generateInputTypes) {
       result.push(createInputUnionType(oneOf, context));
     }
-  });
-
-  return result;
+  }
 }
 
 function visitMaps(
   message: protobuf.Type,
-  context: Context
-): GraphQLNamedType[] {
-  const result: GraphQLNamedType[] = [];
-
+  context: Context,
+  result: GraphQLNamedType[]
+) {
   message.fieldsArray.forEach((field) => {
     if (!(field instanceof protobuf.MapField)) return null;
 
@@ -171,8 +158,6 @@ function visitMaps(
       result.push(inputType);
     }
   });
-
-  return result;
 }
 
 function createEnum(enm: protobuf.Enum, context: Context): GraphQLEnumType {
@@ -286,12 +271,9 @@ function createOutputFieldType(
   context: Context,
   forceNullable?: boolean
 ): GraphQLOutputType | null {
-  const fieldBehaviors = getFieldBehaviors(field);
-  if (fieldBehaviors.has("INPUT_ONLY")) return null;
-  if (forceNullable) {
-    fieldBehaviors.delete("REQUIRED");
-    fieldBehaviors.add("OPTIONAL");
-  }
+  let fieldBehaviors = getFieldBehaviors(field);
+  if (fieldBehaviors.inputOnly) return null;
+  if (forceNullable) fieldBehaviors = asOptional(fieldBehaviors);
 
   const genOption = getGenerateOption(field);
   if (genOption.skipOnType) return null;
@@ -314,8 +296,8 @@ function createInputFieldType(
   forceNullable: boolean,
   context: Context
 ): GraphQLInputType | null {
-  const fieldBehaviors = getFieldBehaviors(field);
-  if (fieldBehaviors.has("OUTPUT_ONLY")) return null;
+  let fieldBehaviors = getFieldBehaviors(field);
+  if (fieldBehaviors.outputOnly) return null;
 
   const genOption = getGenerateOption(field);
   if (genOption.skipOnInput) return null;
@@ -325,8 +307,7 @@ function createInputFieldType(
   }
 
   if (forceNullable || genOption.optionalOverrideEnabled) {
-    fieldBehaviors.delete("REQUIRED");
-    fieldBehaviors.add("OPTIONAL");
+    fieldBehaviors = asOptional(fieldBehaviors);
   }
 
   return createInputDataType(
@@ -368,6 +349,11 @@ function createInputDataType(
 function withEmptyTypeField<
   T extends GraphQLFieldConfigMap<unknown, unknown> | GraphQLInputFieldConfigMap
 >(fields: T, context: Context): T {
-  if (!context.emptyTypeField || Object.keys(fields).length > 0) return fields;
+  if (!context.emptyTypeField || hasAnyField(fields)) return fields;
   return { [context.emptyTypeField]: { type: GraphQLBoolean } } as T;
+}
+
+function hasAnyField(fields: object): boolean {
+  for (const _ in fields) return true;
+  return false;
 }
