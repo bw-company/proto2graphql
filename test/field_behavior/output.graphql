@@ -12,7 +12,7 @@ input TypeAInput {
   enumValue: EnumA!
   nonScalar: google_protobuf_StringValueInput!
   either: TypeA_eitherInput
-  attributes: [String_Attribute_map]
+  attributes: [String_Attribute_mapInput]
   fieldA: TypeA_TypeBInput
 }
 

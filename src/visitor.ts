@@ -302,7 +302,7 @@ function createInputFieldType(
   if (genOption.skipOnInput) return null;
 
   if (field instanceof protobuf.MapField) {
-    return new GraphQLList(context.getType(context.getFullTypeName(field).name));
+    return new GraphQLList(context.getInput(context.getFullTypeName(field).name));
   }
 
   if (forceNullable || genOption.optionalOverrideEnabled) {
