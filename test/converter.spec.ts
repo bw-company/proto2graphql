@@ -25,7 +25,7 @@ describe("converter", () => {
       });
       const expected = readFileSync(
         path.join(testDir, "output.graphql"),
-        "UTF-8"
+        "utf-8"
       );
 
       if (process.env.SNAPSHOT_UPDATE) {
