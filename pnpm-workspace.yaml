@@ -1,5 +1,2 @@
 # Dependency install scripts are blocked by default. Allow only what is actually needed.
 strictDepBuilds: true
-allowBuilds:
-  # The postinstall only creates a node_modules dir for the CLI and prints a versionScheme warning
-  protobufjs: false

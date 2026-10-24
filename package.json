@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "graphql": "^16.14.2",
-    "protobufjs": "^6.11.4"
+    "protobufjs": "^8.8.1"
   },
   "devDependencies": {
     "@types/node": "^24.19.2",
