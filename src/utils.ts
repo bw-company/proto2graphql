@@ -30,7 +30,11 @@ const ScalarTypeMap = {
   bytes: GraphQLString,
 };
 
+// Word characters only, not starting or ending with an underscore: the replacements below would not change it
+const PLAIN_FIELD_NAME = /^[A-Za-z0-9](?:\w*[A-Za-z0-9])?$/;
+
 export function sanitizeFieldName(name: string): string {
+  if (PLAIN_FIELD_NAME.test(name)) return name;
   return name.replace(/\W+/g, "_").replace(/^_/, "").replace(/_$/, "");
 }
 
@@ -56,25 +60,71 @@ export function convertScalar(type: string) {
   return (ScalarTypeMap as any)[type] as GraphQLScalarType;
 }
 
-export type FieldBehaviors = Set<string>;
+// The (google.api.field_behavior) values this converter reacts to
+export interface FieldBehaviors {
+  readonly required: boolean;
+  readonly optional: boolean;
+  readonly inputOnly: boolean;
+  readonly outputOnly: boolean;
+}
+
+const NO_FIELD_BEHAVIORS: FieldBehaviors = Object.freeze({
+  required: false,
+  optional: false,
+  inputOnly: false,
+  outputOnly: false,
+});
+
+const OPTIONAL_FIELD_BEHAVIORS: FieldBehaviors = Object.freeze({
+  required: false,
+  optional: true,
+  inputOnly: false,
+  outputOnly: false,
+});
+
+const FIELD_BEHAVIOR_OPTION = "(google.api.field_behavior)";
+
 export function getFieldBehaviors(field: protobuf.Field): FieldBehaviors {
-  const fieldBehaviors = new Set<string>();
-
   // Incorrectly typed
-  const parsedOptions = ((field.parsedOptions as any) ?? []) as Record<
-    string,
-    any
-  >[];
+  const parsedOptions = (field.parsedOptions as any) as
+    | Record<string, any>[]
+    | undefined;
+  if (!parsedOptions || parsedOptions.length === 0) return NO_FIELD_BEHAVIORS;
 
-  parsedOptions.forEach((options) => {
-    Object.entries(options).forEach(([key, value]) => {
-      if (key === "(google.api.field_behavior)") {
-        fieldBehaviors.add(value);
+  let required = false;
+  let optional = false;
+  let inputOnly = false;
+  let outputOnly = false;
+  let found = false;
+  for (const options of parsedOptions) {
+    for (const key in options) {
+      if (key !== FIELD_BEHAVIOR_OPTION) continue;
+      found = true;
+      switch (options[key]) {
+        case "REQUIRED":
+          required = true;
+          break;
+        case "OPTIONAL":
+          optional = true;
+          break;
+        case "INPUT_ONLY":
+          inputOnly = true;
+          break;
+        case "OUTPUT_ONLY":
+          outputOnly = true;
+          break;
       }
-    });
-  });
+    }
+  }
+  return found
+    ? { required, optional, inputOnly, outputOnly }
+    : NO_FIELD_BEHAVIORS;
+}
 
-  return fieldBehaviors;
+export function asOptional(behaviors: FieldBehaviors): FieldBehaviors {
+  if (!behaviors.required && behaviors.optional) return behaviors;
+  if (!behaviors.inputOnly && !behaviors.outputOnly) return OPTIONAL_FIELD_BEHAVIORS;
+  return { ...behaviors, required: false, optional: true };
 }
 
 export interface GenerateOption {
@@ -93,7 +143,7 @@ export function getGenerateOption(field: protobuf.Field): GenerateOption {
 export function wrapType<T extends GraphQLType>(
   type: T,
   repeated: boolean,
-  fieldBehaviors?: Set<string>
+  fieldBehaviors?: FieldBehaviors
 ): T {
   let result: GraphQLType = type;
 
@@ -103,8 +153,8 @@ export function wrapType<T extends GraphQLType>(
 
   const requiredByDefault = isScalarType(result) || isEnumType(result);
   const required =
-    fieldBehaviors?.has("REQUIRED") ||
-    (requiredByDefault && !fieldBehaviors?.has("OPTIONAL"));
+    fieldBehaviors?.required ||
+    (requiredByDefault && !fieldBehaviors?.optional);
   if (required) {
     result = new GraphQLNonNull(result);
   }
